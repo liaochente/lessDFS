@@ -23,15 +23,26 @@ public class LessMessageHeader implements Serializable {
 
     private Byte priority;
 
+    private String fileExt;
+
     public LessMessageHeader() {
     }
 
-    public LessMessageHeader(Integer magicCode, Integer length, Long sessionId, LessMessageType type, Byte priority) {
+    public LessMessageHeader(Integer magicCode, Integer length, Long sessionId, LessMessageType type, Byte priority, String fileExt) {
         this.magicCode = magicCode;
         this.length = length;
         this.sessionId = sessionId;
         this.type = type;
         this.priority = priority;
+        this.fileExt = fileExt;
+    }
+
+    public String getFileExt() {
+        return fileExt;
+    }
+
+    public void setFileExt(String fileExt) {
+        this.fileExt = fileExt;
     }
 
     public Integer getMagicCode() {

@@ -18,44 +18,72 @@ import java.util.List;
  * 解析报文并转换为LessMessage对象
  */
 public class LessDecodeHandler extends ByteToMessageDecoder {
+
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
         if (byteBuf == null) {
+            System.out.println("error: read emtpy message");
             //todo exception
-            return;
+            throw new RuntimeException("error: read emtpy message");
         }
 
-        System.out.println("本次报文长度 : " + byteBuf.readableBytes());
+        System.out.println("本次报文可读字节 : " + byteBuf.readableBytes());
 
-        if (byteBuf.readableBytes() == 2) {
-            System.out.println(byteBuf.toString());
-        }
         //解析头部
-        Integer magicCode = byteBuf.readInt();
+        LessMessageHeader header = this.readToLessMessageHeader(byteBuf);
+        //读取body
+        LessMessageBody body = this.readToLessMessageBody(header, byteBuf);
+        //创建消息对象
+        LessMessage lessMessage = new LessMessage();
+        lessMessage.setHeader(header);
+        lessMessage.setBody(body);
+
+        System.out.println("读取到报文 lessMessage = " + lessMessage);
+
+        list.add(lessMessage);
+        //释放
+        byteBuf.release();
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        System.out.println("error: 有异常发生，处理异常...");
+        super.exceptionCaught(ctx, cause);
+    }
+
+    private LessMessageHeader readToLessMessageHeader(final ByteBuf buf) {
+        Integer magicCode = buf.readInt();
         if (magicCode != 0x76) {
-            System.out.println("文件头不正确");
+            System.out.println("error: 文件头不正确");
             //todo exception
-            return;
+            throw new RuntimeException("error: 文件头不正确");
         }
 
-        Integer length = byteBuf.readInt();
-        Long sessionId = byteBuf.readLong();
-        Byte type = byteBuf.readByte();
-        Byte priority = byteBuf.readByte();
-        LessMessageHeader header = new LessMessageHeader(magicCode, length, sessionId, LessMessageType.convert(type), priority);
+        Integer length = buf.readInt();
+        Long sessionId = buf.readLong();
+        Byte type = buf.readByte();
+        Byte priority = buf.readByte();
         //丢弃48位保留字节
-        byteBuf.readBytes(6);
+        buf.readBytes(6);
 
-        //读取body
+        ByteBuf fileExtByteBuf = buf.readBytes(8);
+        byte[] fileExtBytes = new byte[fileExtByteBuf.readableBytes()];
+        fileExtByteBuf.readBytes(fileExtByteBuf);
+
+        String fileExt = new String(fileExtBytes);
+
+        LessMessageHeader header = new LessMessageHeader(magicCode, length, sessionId, LessMessageType.convert(type), priority, fileExt);
+        return header;
+    }
+
+    private LessMessageBody readToLessMessageBody(final LessMessageHeader header, final ByteBuf buf) {
         LessMessageBody body = new LessMessageBody();
-
         if (LessMessageType.LOGIN_IN == header.getType()) {
-            System.out.println("剩余可读=" + byteBuf.readableBytes());
-            byte[] bodyByteBuf = new byte[byteBuf.readableBytes()];
-            byteBuf.readBytes(bodyByteBuf);
-            String loginParams = new String(bodyByteBuf);
+            byte[] bodyBytes = new byte[buf.readableBytes()];
+            buf.readBytes(bodyBytes);
+            String password = new String(bodyBytes);
             LoginBO bo = new LoginBO();
-            bo.setUsername(loginParams);
+            bo.setPassword(password);
             body.setBo(bo);
         }
 
@@ -64,18 +92,13 @@ public class LessDecodeHandler extends ByteToMessageDecoder {
         }
 
         if (LessMessageType.UPLOAD_FILE_IN == header.getType()) {
-            ByteBuf bodyByteBuf = byteBuf.readBytes(header.getLength());
-            byte[] data = new byte[bodyByteBuf.readableBytes()];
-            bodyByteBuf.readBytes(data);
+            ByteBuf bodyByteBuf = buf.readBytes(header.getLength());
+            byte[] bodyBytes = new byte[bodyByteBuf.readableBytes()];
+            bodyByteBuf.readBytes(bodyBytes);
             UploadFileBO bo = new UploadFileBO();
-            bo.setData(data);
+            bo.setData(bodyBytes);
             body.setBo(bo);
         }
-
-        LessMessage lessMessage = new LessMessage();
-        lessMessage.setHeader(header);
-        lessMessage.setBody(body);
-        System.out.println("读取到报文 lessMessage = " + lessMessage);
-        list.add(lessMessage);
+        return body;
     }
 }
