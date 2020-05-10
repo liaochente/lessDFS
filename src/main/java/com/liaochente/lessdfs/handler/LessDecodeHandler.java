@@ -41,8 +41,6 @@ public class LessDecodeHandler extends ByteToMessageDecoder {
         System.out.println("读取到报文 lessMessage = " + lessMessage);
 
         list.add(lessMessage);
-        //释放
-        byteBuf.release();
     }
 
     @Override

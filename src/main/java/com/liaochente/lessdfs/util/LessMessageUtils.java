@@ -10,7 +10,6 @@ public class LessMessageUtils {
 
     public final static ThreadLocal<LessMessage> LESS_MESSAGE_THREAD_LOCAL = new ThreadLocal<>();
 
-
     public final static LessMessageUtils create() {
         if (LESS_MESSAGE_THREAD_LOCAL.get() == null) {
             LessMessage lessMessage = new LessMessage();

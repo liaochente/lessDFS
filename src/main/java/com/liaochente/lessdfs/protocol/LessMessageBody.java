@@ -20,7 +20,7 @@ public class LessMessageBody implements Serializable {
     public String toString() {
         String string = null;
         if (bo instanceof LoginBO) {
-            string = ((LoginBO) bo).getUsername();
+            string = ((LoginBO) bo).getPassword();
         } else {
             string = bo.toString();
         }

@@ -13,9 +13,9 @@ public class LessMessage implements Serializable {
     public LessMessage() {
     }
 
-    public LessMessage(Integer magic, Integer length, Long sessionId, Integer type, Byte priority, byte[] bodyData) {
-        header = new LessMessageHeader(magic, length, sessionId, LessMessageType.convert(type), priority);
-    }
+//    public LessMessage(Integer magic, Integer length, Long sessionId, Integer type, Byte priority, byte[] bodyData) {
+//        header = new LessMessageHeader(magic, length, sessionId, LessMessageType.convert(type), priority);
+//    }
 
     public LessMessageHeader getHeader() {
         return header;

@@ -15,6 +15,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.internal.logging.InternalLogLevel;
 
 /**
  *
@@ -37,13 +40,13 @@ public class LessDFSBootstrap {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            socketChannel.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                             //进站handler
                             socketChannel.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024*100, 0, 4,
                                     0, 4));
                             socketChannel.pipeline().addLast(new LessDecodeHandler());
                             socketChannel.pipeline().addLast(new LessAuthHandler());
                             socketChannel.pipeline().addLast(new LessFileUploadHandler());
-
                             //出站handler
                             socketChannel.pipeline().addLast(new LengthFieldPrepender(4));
                         }
