@@ -1,4 +1,9 @@
 package com.liaochente.lessdfs.bo;
 
-public class BaseBO {
+import java.io.Serializable;
+
+/**
+ * 基础数据实体
+ */
+public class BaseBO implements Serializable {
 }
