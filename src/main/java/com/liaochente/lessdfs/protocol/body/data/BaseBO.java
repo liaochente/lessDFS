@@ -1,4 +1,4 @@
-package com.liaochente.lessdfs.bo;
+package com.liaochente.lessdfs.protocol.body.data;
 
 import java.io.Serializable;
 

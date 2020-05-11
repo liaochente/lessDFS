@@ -1,7 +1,6 @@
 package com.liaochente.lessdfs.protocol;
 
-import com.liaochente.lessdfs.bo.BaseBO;
-import com.liaochente.lessdfs.bo.LoginBO;
+import com.liaochente.lessdfs.protocol.body.data.BaseBO;
 
 import java.io.Serializable;
 
@@ -18,12 +17,6 @@ public class LessMessageBody implements Serializable {
 
     @Override
     public String toString() {
-        String string = null;
-        if (bo instanceof LoginBO) {
-            string = ((LoginBO) bo).getPassword();
-        } else {
-            string = bo.toString();
-        }
-        return string;
+        return bo.toString();
     }
 }

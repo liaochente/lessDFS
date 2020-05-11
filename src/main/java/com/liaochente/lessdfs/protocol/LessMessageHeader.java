@@ -1,5 +1,7 @@
 package com.liaochente.lessdfs.protocol;
 
+import com.liaochente.lessdfs.constant.LessStatus;
+
 import java.io.Serializable;
 
 /**
@@ -10,62 +12,51 @@ public class LessMessageHeader implements Serializable {
     /**
      * 文件头，固定字符
      */
-    private Integer magicCode = 0x76;
+    private int magicCode = 0x76;
 
-    /**
-     * 消息体长度
-     */
-    private Integer length;
-
-    private Long sessionId;
+    private long sessionId;
 
     private LessMessageType type;
 
-    private Byte priority;
+    private byte priority;
 
-    private String fileExt;
+    private LessStatus status;
+
+    private byte[] placeholder;
 
     public LessMessageHeader() {
     }
 
-    public LessMessageHeader(Integer magicCode, Integer length, Long sessionId, LessMessageType type, Byte priority, String fileExt) {
+    public LessMessageHeader(Integer magicCode, Long sessionId, LessMessageType type, Byte priority, LessStatus status, byte[] placeholder) {
         this.magicCode = magicCode;
-        this.length = length;
         this.sessionId = sessionId;
         this.type = type;
         this.priority = priority;
-        this.fileExt = fileExt;
+        this.placeholder = placeholder;
+        this.status = status;
     }
 
-    public String getFileExt() {
-        return fileExt;
+    public LessStatus getStatus() {
+        return status;
     }
 
-    public void setFileExt(String fileExt) {
-        this.fileExt = fileExt;
+    public void setStatus(LessStatus status) {
+        this.status = status;
     }
 
-    public Integer getMagicCode() {
+    public int getMagicCode() {
         return magicCode;
     }
 
-    public void setMagicCode(Integer magicCode) {
+    public void setMagicCode(int magicCode) {
         this.magicCode = magicCode;
     }
 
-    public Integer getLength() {
-        return length;
-    }
-
-    public void setLength(Integer length) {
-        this.length = length;
-    }
-
-    public Long getSessionId() {
+    public long getSessionId() {
         return sessionId;
     }
 
-    public void setSessionId(Long sessionId) {
+    public void setSessionId(long sessionId) {
         this.sessionId = sessionId;
     }
 
@@ -77,16 +68,24 @@ public class LessMessageHeader implements Serializable {
         this.type = type;
     }
 
-    public Byte getPriority() {
+    public byte getPriority() {
         return priority;
     }
 
-    public void setPriority(Byte priority) {
+    public void setPriority(byte priority) {
         this.priority = priority;
+    }
+
+    public byte[] getPlaceholder() {
+        return placeholder;
+    }
+
+    public void setPlaceholder(byte[] placeholder) {
+        this.placeholder = placeholder;
     }
 
     @Override
     public String toString() {
-        return "[magicCode:" + magicCode + ", length:" + length + ", sessionId:" + sessionId + ", type:" + type + ", priority:" + priority + "]";
+        return "[magicCode:" + magicCode + ", sessionId:" + sessionId + ", type:" + type + ", priority:" + priority + ", placeholder:" + placeholder + "|" + placeholder.length + "]";
     }
 }
