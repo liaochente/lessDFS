@@ -33,8 +33,8 @@ public class LessAuthHandler extends SimpleChannelInboundHandler<LessMessage> {
             }
         } else {
             if (FIXED_SESSION_ID.equals(lessMessage.getHeader().getSessionId())) {
-                //校验通过不处理
-                LOG.debug("sessionId验证通过，继续执行下一个handler");
+                //校验通过不处理，需要手动执行fireChannelRead，才能进入下一个handler处理
+                channelHandlerContext.fireChannelRead(lessMessage);
             } else {
                 LOG.debug("sessionId验证不通过，返回错误信息");
                 channelHandlerContext.writeAndFlush(LessMessageUtils.writeErrorToLessMessage(LessMessageType.LOGIN_OUT, LessStatus.FAIL));

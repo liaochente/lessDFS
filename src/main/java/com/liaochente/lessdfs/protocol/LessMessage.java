@@ -35,6 +35,6 @@ public class LessMessage implements Serializable {
 
     @Override
     public String toString() {
-        return "header = " + header + " | body = " + body;
+        return "header = " + header + " | body = " + (body == null ? "None" : body);
     }
 }

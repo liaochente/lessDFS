@@ -6,6 +6,7 @@ import com.liaochente.lessdfs.protocol.LessMessageBody;
 import com.liaochente.lessdfs.protocol.LessMessageHeader;
 import com.liaochente.lessdfs.protocol.LessMessageType;
 import com.liaochente.lessdfs.protocol.body.data.AuthInBodyData;
+import com.liaochente.lessdfs.protocol.body.data.UploadFileInBodyData;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.slf4j.Logger;
@@ -98,13 +99,19 @@ public class LessMessageUtils {
      */
     private final static LessMessageHeader readByteBufToLessMessageHeader(final ByteBuf buf) {
         Integer magicCode = buf.readInt();
+        LOG.debug("读取到头部标记 magicCode={}", magicCode);
         if (magicCode != 0x76) {
             LOG.debug("error|文件头不正确");
             //todo exception
             throw new RuntimeException("error: 文件头不正确");
         }
         long sessionId = buf.readLong();
+        LOG.debug("读取到会话标记 sessionId={}", sessionId);
+
         byte type = buf.readByte();
+
+        LOG.debug("读取到操作标记 type={}", type);
+
         byte priority = buf.readByte();
         byte status = buf.readByte();
         //丢弃48位保留字节
@@ -141,19 +148,26 @@ public class LessMessageUtils {
         }
 
         if (LessMessageType.UPLOAD_FILE_IN == header.getType()) {
+            byte[] tempBytes;
+            int fileNameLength = buf.readInt();
+            tempBytes = new byte[fileNameLength];
+            buf.readBytes(tempBytes);
+            String fileName = new String(tempBytes);
 
-//        ByteBuf fileExtByteBuf = buf.readBytes(8);
-//        byte[] fileExtBytes = new byte[fileExtByteBuf.readableBytes()];
-//        fileExtByteBuf.readBytes(fileExtByteBuf);
-//
-//        String fileExt = new String(fileExtBytes);
+            int fileExtLength = buf.readInt();
+            tempBytes = new byte[fileExtLength];
+            buf.readBytes(tempBytes);
+            String fileExt = new String(tempBytes);
 
-//            ByteBuf bodyByteBuf = buf.readBytes(header.getLength());
-//            byte[] bodyBytes = new byte[bodyByteBuf.readableBytes()];
-//            bodyByteBuf.readBytes(bodyBytes);
-//            UploadFileBO bo = new UploadFileBO();
-//            bo.setData(bodyBytes);
-//            body.setBo(bo);
+            int dataLength = buf.readInt();
+            byte[] data = new byte[dataLength];
+            buf.readBytes(data);
+
+            UploadFileInBodyData bodyData = new UploadFileInBodyData();
+            bodyData.setFileName(fileName);
+            bodyData.setFileExt(fileExt);
+            bodyData.setData(data);
+            body.setBo(bodyData);
         }
         return body;
     }

@@ -30,7 +30,11 @@ public class LessDecodeHandler extends ByteToMessageDecoder {
         //创建消息对象
         LessMessage lessMessage = LessMessageUtils.readByteBufToLessMessage(byteBuf);
 
-        LOG.debug("读取到报文 lessMessage = {}", lessMessage);
+        try {
+            LOG.debug("读取到报文 lessMessage = {}", lessMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         list.add(lessMessage);
     }
@@ -38,6 +42,7 @@ public class LessDecodeHandler extends ByteToMessageDecoder {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         System.out.println("error: 有异常发生，处理异常...");
+        LOG.error("解码异常", cause);
         super.exceptionCaught(ctx, cause);
     }
 }

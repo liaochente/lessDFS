@@ -44,11 +44,11 @@ public class LessDFSBootstrap {
                             //进站handler
                             socketChannel.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024*100, 0, 4,
                                     0, 4));
+                            socketChannel.pipeline().addLast(new LengthFieldPrepender(4));
                             socketChannel.pipeline().addLast(new LessDecodeHandler());
                             socketChannel.pipeline().addLast(new LessAuthHandler());
                             socketChannel.pipeline().addLast(new LessFileUploadHandler());
                             //出站handler
-                            socketChannel.pipeline().addLast(new LengthFieldPrepender(4));
                         }
                     });
             ChannelFuture future = serverBootstrap.bind(8888).sync();
