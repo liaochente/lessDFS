@@ -1,5 +1,8 @@
 package com.liaochente.lessdfs.constant;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class LessConfig {
 
     /**
@@ -17,5 +20,6 @@ public class LessConfig {
      */
     public final static String PASSWORD = "123456";
 
+    public final static Map<String, Map<String, String>> FILE_INDEX_MAP = new ConcurrentHashMap<>();
 
 }

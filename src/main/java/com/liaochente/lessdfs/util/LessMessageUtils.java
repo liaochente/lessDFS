@@ -82,6 +82,32 @@ public class LessMessageUtils {
     }
 
     /**
+     * 生成文件下载应答报文
+     *
+     * @param fileName
+     * @param fileExt
+     * @param data
+     * @return
+     */
+    public final static ByteBuf writeDownloadFileOutDataToLessMessage(String fileName, String fileExt, byte[] data) {
+        ByteBuf byteBuf = Unpooled.buffer(20);
+        byteBuf.writeInt(MAGIC_CODE);
+        byteBuf.writeLong(FIXED_SESSION_ID);
+        byteBuf.writeByte((byte) LessMessageType.DOWNLOAD_FILE_OUT.getType());
+        byteBuf.writeByte(0);
+        byteBuf.writeByte((byte) LessStatus.OK.getStatus());
+        byteBuf.writeBytes(new byte[5]);//fixed
+        byteBuf.writeInt(fileName.length());
+        byteBuf.writeBytes(fileName.getBytes());
+        byteBuf.writeInt(fileExt.length());
+        byteBuf.writeBytes(fileExt.getBytes());
+        byteBuf.writeInt(data.length);
+        byteBuf.writeBytes(data);
+
+        return byteBuf;
+    }
+
+    /**
      * 读取缓冲区字节数据并转换为LessMessage Object
      *
      * @param buf

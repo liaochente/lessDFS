@@ -25,23 +25,16 @@ public class LessDecodeHandler extends ByteToMessageDecoder {
             throw new RuntimeException("error: read emtpy message");
         }
 
-        LOG.debug("本次报文可读字节 : {}", byteBuf.readableBytes());
-
         //创建消息对象
         LessMessage lessMessage = LessMessageUtils.readByteBufToLessMessage(byteBuf);
 
-        try {
-            LOG.debug("读取到报文 lessMessage = {}", lessMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        LOG.debug("解析报文 >>> lessMessage = {}", lessMessage);
 
         list.add(lessMessage);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        System.out.println("error: 有异常发生，处理异常...");
         LOG.error("解码异常", cause);
         super.exceptionCaught(ctx, cause);
     }

@@ -17,6 +17,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static com.liaochente.lessdfs.constant.LessConfig.FILE_INDEX_MAP;
 
 /**
  * 处理文件上传的handler
@@ -54,6 +57,13 @@ public class LessFileUploadHandler extends SimpleChannelInboundHandler<LessMessa
 
             byteBuffer.clear();
             fileChannel.close();
+
+            Map<String, String> indexMap = new ConcurrentHashMap<>();
+            indexMap.put("fileExt", fileExt);
+            indexMap.put("absolutePath", realSavePath + fileName);
+            indexMap.put("groupPath", LessConfig.GROUP);
+
+            FILE_INDEX_MAP.put(groupPath + fileName, indexMap);
 
             channelHandlerContext.writeAndFlush(LessMessageUtils.writeUploadFileOutDataToLessMessage(groupPath + fileName, fileExt));
         } else {
