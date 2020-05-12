@@ -6,6 +6,7 @@ import com.liaochente.lessdfs.protocol.LessMessageBody;
 import com.liaochente.lessdfs.protocol.LessMessageHeader;
 import com.liaochente.lessdfs.protocol.LessMessageType;
 import com.liaochente.lessdfs.protocol.body.data.AuthInBodyData;
+import com.liaochente.lessdfs.protocol.body.data.DownloadFileBodyData;
 import com.liaochente.lessdfs.protocol.body.data.UploadFileInBodyData;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -17,6 +18,7 @@ public class LessMessageUtils {
     private final static Logger LOG = LoggerFactory.getLogger(LessMessageUtils.class);
 
     private final static Integer MAGIC_CODE = 0x76;
+    private static final Long FIXED_SESSION_ID = 654321L;
 
     /**
      * 生成操作失败应答报文
@@ -51,24 +53,30 @@ public class LessMessageUtils {
         byteBuf.writeByte(0);
         byteBuf.writeByte((byte) LessStatus.OK.getStatus());
         byteBuf.writeBytes(new byte[5]);//fixed
-        byteBuf.writeInt(LessStatus.OK.getMessage().length());
-        byteBuf.writeBytes(LessStatus.OK.getMessage().getBytes());
+//        byteBuf.writeInt(LessStatus.OK.getMessage().length());
+//        byteBuf.writeBytes(LessStatus.OK.getMessage().getBytes());
         return byteBuf;
     }
 
-    public final static ByteBuf writeUploadFileOutDataToLessMessage(String fileExt, byte[] body) {
-        Integer length = body.length;
-        Byte priority = 0;
-
-        ByteBuf byteBuf = Unpooled.buffer(32 + length);
+    /**
+     * 生成文件上传应答报文
+     *
+     * @param fileName
+     * @param fileExt
+     * @return
+     */
+    public final static ByteBuf writeUploadFileOutDataToLessMessage(String fileName, String fileExt) {
+        ByteBuf byteBuf = Unpooled.buffer(20);
         byteBuf.writeInt(MAGIC_CODE);
-        byteBuf.writeInt(length);
-        byteBuf.writeLong(0L);//sessionId empty
-        byteBuf.writeByte((byte) LessMessageType.LOGIN_OUT.getType());
-        byteBuf.writeByte(priority);
-        byteBuf.writeBytes(new byte[6]);//fixed
-        byteBuf.writeBytes(fileExt.getBytes());//fileExt
-        byteBuf.writeBytes(body);//body
+        byteBuf.writeLong(FIXED_SESSION_ID);
+        byteBuf.writeByte((byte) LessMessageType.UPLOAD_FILE_OUT.getType());
+        byteBuf.writeByte(0);
+        byteBuf.writeByte((byte) LessStatus.OK.getStatus());
+        byteBuf.writeBytes(new byte[5]);//fixed
+        byteBuf.writeInt(fileName.length());
+        byteBuf.writeBytes(fileName.getBytes());
+        byteBuf.writeInt(fileExt.length());
+        byteBuf.writeBytes(fileExt.getBytes());
 
         return byteBuf;
     }
@@ -149,10 +157,10 @@ public class LessMessageUtils {
 
         if (LessMessageType.UPLOAD_FILE_IN == header.getType()) {
             byte[] tempBytes;
-            int fileNameLength = buf.readInt();
-            tempBytes = new byte[fileNameLength];
-            buf.readBytes(tempBytes);
-            String fileName = new String(tempBytes);
+//            int fileNameLength = buf.readInt();
+//            tempBytes = new byte[fileNameLength];
+//            buf.readBytes(tempBytes);
+//            String fileName = new String(tempBytes);
 
             int fileExtLength = buf.readInt();
             tempBytes = new byte[fileExtLength];
@@ -164,9 +172,21 @@ public class LessMessageUtils {
             buf.readBytes(data);
 
             UploadFileInBodyData bodyData = new UploadFileInBodyData();
-            bodyData.setFileName(fileName);
+//            bodyData.setFileName(fileName);
             bodyData.setFileExt(fileExt);
             bodyData.setData(data);
+            body.setBo(bodyData);
+        }
+
+        if (LessMessageType.DOWNLOAD_FILE_IN == header.getType()) {
+            int filePathLength = buf.readInt();
+
+            byte[] tempBytes = new byte[filePathLength];
+
+            buf.readBytes(tempBytes);
+            String filePath = new String(tempBytes);
+            DownloadFileBodyData bodyData = new DownloadFileBodyData();
+            bodyData.setFileName(filePath);
             body.setBo(bodyData);
         }
         return body;

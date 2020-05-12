@@ -1,19 +1,10 @@
 package com.liaochente.lessdfs.protocol.body.data;
 
 public class UploadFileInBodyData extends BaseBO {
-    private String fileName;
 
     private String fileExt;
 
     private byte[] data;
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
 
     public String getFileExt() {
         return fileExt;
@@ -33,6 +24,6 @@ public class UploadFileInBodyData extends BaseBO {
 
     @Override
     public String toString() {
-        return "[fileName=" + fileName + ", fileExt=" + fileExt + ", data=" + data + "|" + data.length + "]";
+        return "[fileExt=" + fileExt + ", data=" + data + "|" + data.length + "]";
     }
 }

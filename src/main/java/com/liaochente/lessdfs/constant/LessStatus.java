@@ -5,7 +5,7 @@ import com.liaochente.lessdfs.protocol.LessMessageType;
 public enum LessStatus {
 
     FAIL(200, "请求失败"),
-    OK(0, "请求成功");
+    OK(1, "请求成功");
 
     private LessStatus(int status, String message) {
         this.status = status;

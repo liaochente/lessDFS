@@ -86,6 +86,6 @@ public class LessMessageHeader implements Serializable {
 
     @Override
     public String toString() {
-        return "[magicCode:" + magicCode + ", sessionId:" + sessionId + ", type:" + type + ", priority:" + priority + ", placeholder:" + placeholder + "|" + placeholder == null ? "0" : placeholder.length + "]";
+        return "[magicCode:" + magicCode + ", sessionId:" + sessionId + ", type:" + type + ", priority:" + priority + ", placeholder:" + placeholder + "|" + (placeholder == null ? "0" : placeholder.length) + "]";
     }
 }

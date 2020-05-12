@@ -4,6 +4,7 @@ import java.lang.System;
 
 import com.liaochente.lessdfs.handler.LessAuthHandler;
 import com.liaochente.lessdfs.handler.LessDecodeHandler;
+import com.liaochente.lessdfs.handler.LessFileDownloadHandler;
 import com.liaochente.lessdfs.handler.LessFileUploadHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -48,6 +49,7 @@ public class LessDFSBootstrap {
                             socketChannel.pipeline().addLast(new LessDecodeHandler());
                             socketChannel.pipeline().addLast(new LessAuthHandler());
                             socketChannel.pipeline().addLast(new LessFileUploadHandler());
+                            socketChannel.pipeline().addLast(new LessFileDownloadHandler());
                             //出站handler
                         }
                     });
