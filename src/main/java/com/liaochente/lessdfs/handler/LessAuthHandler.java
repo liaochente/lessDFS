@@ -41,4 +41,9 @@ public class LessAuthHandler extends SimpleChannelInboundHandler<LessMessage> {
             }
         }
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
+    }
 }

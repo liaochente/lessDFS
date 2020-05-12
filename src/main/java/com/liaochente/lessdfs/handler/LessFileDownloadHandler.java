@@ -55,4 +55,9 @@ public class LessFileDownloadHandler extends SimpleChannelInboundHandler<LessMes
             channelHandlerContext.fireChannelRead(lessMessage);
         }
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
+    }
 }

@@ -1,6 +1,7 @@
 package com.liaochente.lessdfs.main;
 
 import java.lang.System;
+import java.util.concurrent.TimeUnit;
 
 import com.liaochente.lessdfs.handler.LessAuthHandler;
 import com.liaochente.lessdfs.handler.LessDecodeHandler;
@@ -18,6 +19,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.internal.logging.InternalLogLevel;
 
 /**
@@ -50,6 +52,7 @@ public class LessDFSBootstrap {
                             socketChannel.pipeline().addLast(new LessAuthHandler());
                             socketChannel.pipeline().addLast(new LessFileUploadHandler());
                             socketChannel.pipeline().addLast(new LessFileDownloadHandler());
+                            socketChannel.pipeline().addLast(new IdleStateHandler(60,60,120, TimeUnit.SECONDS));
                             //出站handler
                         }
                     });

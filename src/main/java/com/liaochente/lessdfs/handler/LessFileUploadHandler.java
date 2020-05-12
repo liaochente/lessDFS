@@ -70,4 +70,9 @@ public class LessFileUploadHandler extends SimpleChannelInboundHandler<LessMessa
             channelHandlerContext.fireChannelRead(lessMessage);
         }
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
+    }
 }
