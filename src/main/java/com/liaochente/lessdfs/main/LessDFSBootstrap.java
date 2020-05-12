@@ -1,12 +1,8 @@
 package com.liaochente.lessdfs.main;
 
 import java.lang.System;
-import java.util.concurrent.TimeUnit;
 
-import com.liaochente.lessdfs.handler.LessAuthHandler;
-import com.liaochente.lessdfs.handler.LessDecodeHandler;
-import com.liaochente.lessdfs.handler.LessFileDownloadHandler;
-import com.liaochente.lessdfs.handler.LessFileUploadHandler;
+import com.liaochente.lessdfs.handler.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -19,8 +15,6 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.util.internal.logging.InternalLogLevel;
 
 /**
  *
@@ -50,8 +44,9 @@ public class LessDFSBootstrap {
                             socketChannel.pipeline().addLast(new LengthFieldPrepender(4));
                             socketChannel.pipeline().addLast(new LessDecodeHandler());
                             socketChannel.pipeline().addLast(new LessAuthHandler());
-                            socketChannel.pipeline().addLast(new LessFileUploadHandler());
-                            socketChannel.pipeline().addLast(new LessFileDownloadHandler());
+                            socketChannel.pipeline().addLast(new LessUploadFileHandler());
+                            socketChannel.pipeline().addLast(new LessDownloadFileHandler());
+                            socketChannel.pipeline().addLast(new LessDeleteFileHandler());
 //                            socketChannel.pipeline().addLast(new IdleStateHandler(60,60,120, TimeUnit.SECONDS));
                             //出站handler
                         }

@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Map;
@@ -24,9 +23,9 @@ import static com.liaochente.lessdfs.constant.LessConfig.FILE_INDEX_MAP;
 /**
  * 处理文件上传的handler
  */
-public class LessFileUploadHandler extends SimpleChannelInboundHandler<LessMessage> {
+public class LessUploadFileHandler extends SimpleChannelInboundHandler<LessMessage> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LessFileUploadHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LessUploadFileHandler.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, LessMessage lessMessage) throws Exception {

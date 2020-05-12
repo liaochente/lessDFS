@@ -14,7 +14,7 @@ import java.io.File;
 /**
  * 处理文件删除
  */
-public class LessFileDeleteHandler extends SimpleChannelInboundHandler<LessMessage> {
+public class LessDeleteFileHandler extends SimpleChannelInboundHandler<LessMessage> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, LessMessage lessMessage) throws Exception {

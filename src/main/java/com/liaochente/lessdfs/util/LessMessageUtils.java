@@ -107,8 +107,9 @@ public class LessMessageUtils {
 
         return byteBuf;
     }
+
     /**
-     * 生成文件下载应答报文
+     * 生成文件删除应答报文
      *
      * @return
      */

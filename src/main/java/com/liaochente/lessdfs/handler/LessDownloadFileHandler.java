@@ -22,9 +22,9 @@ import static com.liaochente.lessdfs.constant.LessConfig.FILE_INDEX_MAP;
 /**
  * 处理文件下载
  */
-public class LessFileDownloadHandler extends SimpleChannelInboundHandler<LessMessage> {
+public class LessDownloadFileHandler extends SimpleChannelInboundHandler<LessMessage> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LessFileDownloadHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LessDownloadFileHandler.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, LessMessage lessMessage) throws Exception {
