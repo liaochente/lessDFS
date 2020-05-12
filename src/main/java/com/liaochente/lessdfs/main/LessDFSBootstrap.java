@@ -52,7 +52,7 @@ public class LessDFSBootstrap {
                             socketChannel.pipeline().addLast(new LessAuthHandler());
                             socketChannel.pipeline().addLast(new LessFileUploadHandler());
                             socketChannel.pipeline().addLast(new LessFileDownloadHandler());
-                            socketChannel.pipeline().addLast(new IdleStateHandler(60,60,120, TimeUnit.SECONDS));
+//                            socketChannel.pipeline().addLast(new IdleStateHandler(60,60,120, TimeUnit.SECONDS));
                             //出站handler
                         }
                     });

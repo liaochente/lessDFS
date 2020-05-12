@@ -6,6 +6,7 @@ import com.liaochente.lessdfs.protocol.LessMessageBody;
 import com.liaochente.lessdfs.protocol.LessMessageHeader;
 import com.liaochente.lessdfs.protocol.LessMessageType;
 import com.liaochente.lessdfs.protocol.body.data.AuthInBodyData;
+import com.liaochente.lessdfs.protocol.body.data.DeleteFileInBodyData;
 import com.liaochente.lessdfs.protocol.body.data.DownloadFileBodyData;
 import com.liaochente.lessdfs.protocol.body.data.UploadFileInBodyData;
 import io.netty.buffer.ByteBuf;
@@ -103,6 +104,22 @@ public class LessMessageUtils {
         byteBuf.writeBytes(fileExt.getBytes());
         byteBuf.writeInt(data.length);
         byteBuf.writeBytes(data);
+
+        return byteBuf;
+    }
+    /**
+     * 生成文件下载应答报文
+     *
+     * @return
+     */
+    public final static ByteBuf writeDeleteFileOutDataToLessMessage() {
+        ByteBuf byteBuf = Unpooled.buffer(20);
+        byteBuf.writeInt(MAGIC_CODE);
+        byteBuf.writeLong(FIXED_SESSION_ID);
+        byteBuf.writeByte((byte) LessMessageType.DELETE_FILE_OUT.getType());
+        byteBuf.writeByte(0);
+        byteBuf.writeByte((byte) LessStatus.OK.getStatus());
+        byteBuf.writeBytes(new byte[5]);//fixed
 
         return byteBuf;
     }
@@ -212,6 +229,18 @@ public class LessMessageUtils {
             buf.readBytes(tempBytes);
             String filePath = new String(tempBytes);
             DownloadFileBodyData bodyData = new DownloadFileBodyData();
+            bodyData.setFileName(filePath);
+            body.setBo(bodyData);
+        }
+
+        if (LessMessageType.DELETE_FILE_IN == header.getType()) {
+            int filePathLength = buf.readInt();
+
+            byte[] tempBytes = new byte[filePathLength];
+
+            buf.readBytes(tempBytes);
+            String filePath = new String(tempBytes);
+            DeleteFileInBodyData bodyData = new DeleteFileInBodyData();
             bodyData.setFileName(filePath);
             body.setBo(bodyData);
         }
