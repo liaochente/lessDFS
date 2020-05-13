@@ -12,7 +12,7 @@ public class LessMessageHeader implements Serializable {
     /**
      * 文件头，固定字符
      */
-    private int magicCode = 0x76;
+    private int magicCode = 0x294;
 
     private long sessionId;
 
