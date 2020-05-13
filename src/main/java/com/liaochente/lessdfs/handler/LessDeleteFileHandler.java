@@ -22,7 +22,7 @@ public class LessDeleteFileHandler extends SimpleChannelInboundHandler<LessMessa
             DeleteFileInBodyData bodyData = (DeleteFileInBodyData) lessMessage.getBody().getBo();
             String fileName = bodyData.getFileName();
             //查找要下载的文件
-            File file = new File(LessConfig.FILE_ROOT_PATH + fileName);
+            File file = new File(LessConfig.storegeDir + fileName);
             if (file.exists()) {
                 file.delete();
             }

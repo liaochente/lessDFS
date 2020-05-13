@@ -38,9 +38,9 @@ public class LessUploadFileHandler extends SimpleChannelInboundHandler<LessMessa
             byteBuffer.put(data);
             byteBuffer.flip();
 
-            String groupPath = LessConfig.GROUP;
+            String groupPath = LessConfig.group;
 
-            String realSavePath = LessConfig.FILE_ROOT_PATH + groupPath;
+            String realSavePath = LessConfig.storegeDir + groupPath;
 
             String fileExt = bodyData.getFileExt();
 
@@ -60,7 +60,7 @@ public class LessUploadFileHandler extends SimpleChannelInboundHandler<LessMessa
             Map<String, String> indexMap = new ConcurrentHashMap<>();
             indexMap.put("fileExt", fileExt);
             indexMap.put("absolutePath", realSavePath + fileName);
-            indexMap.put("groupPath", LessConfig.GROUP);
+            indexMap.put("groupPath", LessConfig.group);
 
             FILE_INDEX_MAP.put(groupPath + fileName, indexMap);
 

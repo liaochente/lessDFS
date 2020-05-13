@@ -34,7 +34,7 @@ public class LessDownloadFileHandler extends SimpleChannelInboundHandler<LessMes
             DownloadFileBodyData bodyData = (DownloadFileBodyData) lessMessage.getBody().getBo();
             String fileName = bodyData.getFileName();
             //查找要下载的文件
-            File file = new File(LessConfig.FILE_ROOT_PATH + fileName);
+            File file = new File(LessConfig.storegeDir + fileName);
             if (file.exists()) {
                 FileChannel fileChannel = new FileInputStream(file).getChannel();
                 ByteBuffer byteBuffer = ByteBuffer.allocate((int) file.length());
