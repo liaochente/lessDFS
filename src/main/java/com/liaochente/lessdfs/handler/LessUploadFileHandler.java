@@ -40,7 +40,7 @@ public class LessUploadFileHandler extends SimpleChannelInboundHandler<LessMessa
 
             String groupPath = LessConfig.group;
 
-            String realSavePath = LessConfig.storegeDir + groupPath;
+            String realSavePath = LessConfig.storageDir + groupPath;
 
             String fileExt = bodyData.getFileExt();
 

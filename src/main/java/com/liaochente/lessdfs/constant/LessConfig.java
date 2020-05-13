@@ -18,6 +18,11 @@ public class LessConfig {
 
     public final static Map<String, Map<String, String>> FILE_INDEX_MAP = new ConcurrentHashMap<>();
 
+    /**
+     * 初始化配置文件
+     *
+     * @throws IOException
+     */
     public final static void init() throws IOException {
         String path = LessConfig.class.getClassLoader().getResource("less.conf").getPath();
         List<String> configLines = Files.readAllLines(Paths.get(path));
@@ -44,7 +49,7 @@ public class LessConfig {
                                 }
 
                                 if ("dataDir".equals(field.getName())) {
-                                    LessConfig.storegeDir = "/" + LessConfig.dataDir + "/storege/";
+                                    LessConfig.storageDir = "/" + LessConfig.dataDir + "/storege/";
                                 }
                             } catch (IllegalAccessException e) {
                                 e.printStackTrace();
@@ -59,7 +64,7 @@ public class LessConfig {
     @LessValue("less.server.datadir")
     public static String dataDir = "";
 
-    public static String storegeDir = "/" + dataDir + "/storege/";
+    public static String storageDir = "/" + dataDir + "/storege/";
 
     @LessValue("less.server.group")
     public static String group = "group0";
