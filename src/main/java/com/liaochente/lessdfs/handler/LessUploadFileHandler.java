@@ -32,8 +32,8 @@ public class LessUploadFileHandler extends SimpleChannelInboundHandler<LessMessa
             String groupPath = LessConfig.getGroup();
             String fileExt = bodyData.getFileExt();
             /*
-                存储路径规则：虚拟目录的实际路径 + 分组 + 随机用户名
-                返给客户端用于下载的key = 分组 + 虚拟目录的虚拟名称 + 随机用户名
+                存储路径规则：虚拟目录的实际路径 + 随机用户名
+                返给客户端用于下载的key = 虚拟目录的虚拟名称 + 随机用户名
              */
             String fileName = UUID.randomUUID().toString().replaceAll("-", "");
             String filePath = virtualDirectory.getRealPath().toString() + "/" + fileName;
