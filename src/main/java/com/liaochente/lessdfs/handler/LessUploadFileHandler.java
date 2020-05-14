@@ -10,15 +10,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static com.liaochente.lessdfs.constant.LessConfig.FILE_INDEX_MAP;
 
 /**
  * 处理文件上传的handler
@@ -30,41 +24,22 @@ public class LessUploadFileHandler extends SimpleChannelInboundHandler<LessMessa
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, LessMessage lessMessage) throws Exception {
         if (lessMessage.getHeader().getType() == LessMessageType.UPLOAD_FILE_IN) {
-            LOG.debug("处理报文 >>> {}", lessMessage);
+            LOG.debug("收到上传报文请求 lessMessage = {}", lessMessage);
 
             UploadFileInBodyData bodyData = (UploadFileInBodyData) lessMessage.getBody().getBo();
             byte[] data = bodyData.getData();
-            ByteBuffer byteBuffer = ByteBuffer.allocate(data.length);
-            byteBuffer.put(data);
-            byteBuffer.flip();
-
-            String groupPath = LessConfig.group;
-
-            String realSavePath = LessConfig.storageDir + groupPath;
-
+            LessConfig.VirtualDirectory virtualDirectory = LessConfig.getVirtualDirectory();
+            String groupPath = LessConfig.getGroup();
             String fileExt = bodyData.getFileExt();
-
+            /*
+                存储路径规则：虚拟目录的实际路径 + 分组 + 随机用户名
+                返给客户端用于下载的key = 分组 + 虚拟目录的虚拟名称 + 随机用户名
+             */
             String fileName = UUID.randomUUID().toString().replaceAll("-", "");
-
-            File file = new File(realSavePath);
-            file.mkdirs();
-
-            file = new File(realSavePath + fileName);
-
-            FileChannel fileChannel = new FileOutputStream(file, false).getChannel();
-            fileChannel.write(byteBuffer);
-
-            byteBuffer.clear();
-            fileChannel.close();
-
-            Map<String, String> indexMap = new ConcurrentHashMap<>();
-            indexMap.put("fileExt", fileExt);
-            indexMap.put("absolutePath", realSavePath + fileName);
-            indexMap.put("groupPath", LessConfig.group);
-
-            FILE_INDEX_MAP.put(groupPath + fileName, indexMap);
-
-            channelHandlerContext.writeAndFlush(LessMessageUtils.writeUploadFileOutDataToLessMessage(groupPath + fileName, fileExt));
+            String filePath = virtualDirectory.getRealPath().toString() + "/" + fileName;
+            Files.write(Paths.get(filePath), data);
+            String shortName = virtualDirectory.getVirtualPath() + "/" + fileName;
+            channelHandlerContext.writeAndFlush(LessMessageUtils.writeUploadFileOutDataToLessMessage(shortName, fileExt));
         } else {
             channelHandlerContext.fireChannelRead(lessMessage);
         }
@@ -72,6 +47,7 @@ public class LessUploadFileHandler extends SimpleChannelInboundHandler<LessMessa
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        LOG.error("exceptionCaught");
         super.exceptionCaught(ctx, cause);
     }
 }

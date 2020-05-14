@@ -17,17 +17,22 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class LessDFSBootstrap {
 
+    private final static Logger LOG = LoggerFactory.getLogger(LessDFSBootstrap.class);
+
     public static void main(String[] args) {
         try {
             LessConfig.init();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | IllegalAccessException e) {
+            LOG.error("初始化配置文件失败", e);
+            return;
         }
         LessDFSBootstrap.start();
     }
@@ -40,28 +45,29 @@ public class LessDFSBootstrap {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossLoopGroup, workerLoopGroup)
                     .channel(NioServerSocketChannel.class)
-                    .option(ChannelOption.SO_BACKLOG, LessConfig.soBacklog)
+                    .option(ChannelOption.SO_BACKLOG, LessConfig.getSoBacklog())
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
-                            //进站handler
-                            socketChannel.pipeline().addLast(new LengthFieldBasedFrameDecoder(LessConfig.maxFrameLength, 0, 4,
+
+                            socketChannel.pipeline().addLast(new LengthFieldBasedFrameDecoder(LessConfig.getMaxFrameLength(), 0, 4,
                                     0, 4));
                             socketChannel.pipeline().addLast(new LengthFieldPrepender(4));
+
                             socketChannel.pipeline().addLast(new LessDecodeHandler());
                             socketChannel.pipeline().addLast(new LessAuthHandler());
                             socketChannel.pipeline().addLast(new LessUploadFileHandler());
                             socketChannel.pipeline().addLast(new LessDownloadFileHandler());
                             socketChannel.pipeline().addLast(new LessDeleteFileHandler());
 //                            socketChannel.pipeline().addLast(new IdleStateHandler(60,60,120, TimeUnit.SECONDS));
-                            //出站handler
+
                         }
                     });
             ChannelFuture future = serverBootstrap.bind(8888).sync();
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.error("LessDFS 服务中断", e);
         } finally {
             bossLoopGroup.shutdownGracefully();
             workerLoopGroup.shutdownGracefully();

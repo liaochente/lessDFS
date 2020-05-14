@@ -11,13 +11,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.util.Map;
-
-import static com.liaochente.lessdfs.constant.LessConfig.FILE_INDEX_MAP;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * 处理文件下载
@@ -31,23 +27,20 @@ public class LessDownloadFileHandler extends SimpleChannelInboundHandler<LessMes
         if (lessMessage.getHeader().getType() == LessMessageType.DOWNLOAD_FILE_IN) {
             LOG.debug("对方想要下载文件 >>> {}", ((DownloadFileBodyData) lessMessage.getBody().getBo()).getFileName());
 
+            /*
+                存储路径规则：虚拟目录的实际路径 + 分组 + 随机用户名
+                返给客户端用于下载的key = 分组 + 虚拟目录的虚拟名称 + 随机用户名
+                基于以上规则，读取文件时，需要先解析出“虚拟目录的虚拟名称”，然后寻找到真正的存储路径进行read
+                example:group0/M0/testfile
+             */
             DownloadFileBodyData bodyData = (DownloadFileBodyData) lessMessage.getBody().getBo();
             String fileName = bodyData.getFileName();
+            String filePath = LessConfig.getFileRealPath(fileName);
+            Path path = Paths.get(filePath);
             //查找要下载的文件
-            File file = new File(LessConfig.storageDir + fileName);
-            if (file.exists()) {
-                FileChannel fileChannel = new FileInputStream(file).getChannel();
-                ByteBuffer byteBuffer = ByteBuffer.allocate((int) file.length());
-                fileChannel.read(byteBuffer);
-
-                byte[] data = byteBuffer.array();
-
-                byteBuffer.clear();
-                fileChannel.close();
-
-                Map<String, String> indexMap = FILE_INDEX_MAP.get(fileName);
-                String fileExt = indexMap.get("fileExt");
-                channelHandlerContext.writeAndFlush(LessMessageUtils.writeDownloadFileOutDataToLessMessage(fileName, fileExt, data));
+            if (path.toFile().exists()) {
+                byte[] data = Files.readAllBytes(path);
+                channelHandlerContext.writeAndFlush(LessMessageUtils.writeDownloadFileOutDataToLessMessage(fileName, data));
             } else {
                 channelHandlerContext.writeAndFlush(LessMessageUtils.writeErrorToLessMessage(LessMessageType.DOWNLOAD_FILE_OUT, LessStatus.NOT_FOUND));
             }
@@ -58,6 +51,7 @@ public class LessDownloadFileHandler extends SimpleChannelInboundHandler<LessMes
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        LOG.error("exceptionCaught");
         super.exceptionCaught(ctx, cause);
     }
 }

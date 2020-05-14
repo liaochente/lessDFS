@@ -1,5 +1,6 @@
 package com.liaochente.lessdfs.protocol;
 
+import com.liaochente.lessdfs.constant.LessConfig;
 import com.liaochente.lessdfs.constant.LessStatus;
 
 import java.io.Serializable;
@@ -12,7 +13,7 @@ public class LessMessageHeader implements Serializable {
     /**
      * 文件头，固定字符
      */
-    private int magicCode = 0x294;
+    private int magicCode;
 
     private long sessionId;
 

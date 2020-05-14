@@ -1,5 +1,6 @@
 package com.liaochente.lessdfs.util;
 
+import com.liaochente.lessdfs.constant.LessConfig;
 import com.liaochente.lessdfs.constant.LessStatus;
 import com.liaochente.lessdfs.protocol.LessMessage;
 import com.liaochente.lessdfs.protocol.LessMessageBody;
@@ -18,7 +19,8 @@ import org.slf4j.LoggerFactory;
 public class LessMessageUtils {
     private final static Logger LOG = LoggerFactory.getLogger(LessMessageUtils.class);
 
-    private final static Integer MAGIC_CODE = 0x76;
+    public final static Integer MAGIC_CODE = 0x294;
+
     private static final Long FIXED_SESSION_ID = 654321L;
 
     /**
@@ -86,11 +88,10 @@ public class LessMessageUtils {
      * 生成文件下载应答报文
      *
      * @param fileName
-     * @param fileExt
      * @param data
      * @return
      */
-    public final static ByteBuf writeDownloadFileOutDataToLessMessage(String fileName, String fileExt, byte[] data) {
+    public final static ByteBuf writeDownloadFileOutDataToLessMessage(String fileName, byte[] data) {
         ByteBuf byteBuf = Unpooled.buffer(20);
         byteBuf.writeInt(MAGIC_CODE);
         byteBuf.writeLong(FIXED_SESSION_ID);
@@ -100,8 +101,8 @@ public class LessMessageUtils {
         byteBuf.writeBytes(new byte[5]);//fixed
         byteBuf.writeInt(fileName.length());
         byteBuf.writeBytes(fileName.getBytes());
-        byteBuf.writeInt(fileExt.length());
-        byteBuf.writeBytes(fileExt.getBytes());
+//        byteBuf.writeInt(fileExt.length());
+//        byteBuf.writeBytes(fileExt.getBytes());
         byteBuf.writeInt(data.length);
         byteBuf.writeBytes(data);
 
@@ -152,7 +153,7 @@ public class LessMessageUtils {
     private final static LessMessageHeader readByteBufToLessMessageHeader(final ByteBuf buf) {
         Integer magicCode = buf.readInt();
         LOG.debug("读取到头部标记 magicCode={}", magicCode);
-        if (magicCode != 0x76) {
+        if (magicCode != LessConfig.MAGIC_CODE) {
             LOG.debug("error|文件头不正确");
             //todo exception
             throw new RuntimeException("error: 文件头不正确");
