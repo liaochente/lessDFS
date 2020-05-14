@@ -1,5 +1,7 @@
 package com.liaochente.lessdfs.handler;
 
+import com.liaochente.lessdfs.constant.LessStatus;
+import com.liaochente.lessdfs.exception.LessServerException;
 import com.liaochente.lessdfs.protocol.LessMessage;
 import com.liaochente.lessdfs.util.LessMessageUtils;
 import io.netty.buffer.ByteBuf;
@@ -20,11 +22,8 @@ public class LessDecodeHandler extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
         if (byteBuf == null) {
-            LOG.debug("error: read emtpy message");
-            //todo exception
-            throw new RuntimeException("error: read emtpy message");
+            throw new LessServerException(LessStatus.EMPTY_PROTOCOL);
         }
-
         //创建消息对象
         LessMessage lessMessage = LessMessageUtils.readByteBufToLessMessage(byteBuf);
 
@@ -35,7 +34,7 @@ public class LessDecodeHandler extends ByteToMessageDecoder {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        LOG.error("解码异常", cause);
+        LOG.error("接收到空报文");
         super.exceptionCaught(ctx, cause);
     }
 }

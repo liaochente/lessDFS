@@ -8,13 +8,18 @@ import com.liaochente.lessdfs.protocol.body.data.DownloadFileBodyData;
 import com.liaochente.lessdfs.util.LessMessageUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.nio.file.Files;
 
 /**
  * 处理文件删除
  */
 public class LessDeleteFileHandler extends SimpleChannelInboundHandler<LessMessage> {
+
+    private final static Logger LOG = LoggerFactory.getLogger(LessDeleteFileHandler.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, LessMessage lessMessage) throws Exception {
@@ -22,9 +27,14 @@ public class LessDeleteFileHandler extends SimpleChannelInboundHandler<LessMessa
             DeleteFileInBodyData bodyData = (DeleteFileInBodyData) lessMessage.getBody().getBo();
             String fileName = bodyData.getFileName();
             //查找要下载的文件
-            File file = new File(LessConfig.storageDir + fileName);
+            String path = LessConfig.storageDir + fileName;
+            File file = new File(path);
             if (file.exists()) {
-                file.delete();
+                if (file.delete()) {
+                    LOG.debug("成功删除文件 [{}]", path);
+                } else {
+                    LOG.debug("未成功删除文件 [{}]", path);
+                }
             }
             channelHandlerContext.writeAndFlush(LessMessageUtils.writeDeleteFileOutDataToLessMessage());
         } else {

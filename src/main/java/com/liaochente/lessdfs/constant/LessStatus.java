@@ -5,6 +5,7 @@ import com.liaochente.lessdfs.protocol.LessMessageType;
 public enum LessStatus {
 
     NOT_FOUND(204, "文件不存在"),
+    EMPTY_PROTOCOL(201, "报文为空"),
     FAIL(200, "请求失败"),
     OK(1, "请求成功");
 
