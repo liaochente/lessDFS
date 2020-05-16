@@ -39,7 +39,8 @@ public class LessUploadFileHandler extends SimpleChannelInboundHandler<LessMessa
             String filePath = virtualDirectory.getRealPath().toString() + "/" + fileName;
             Files.write(Paths.get(filePath), data);
             String shortName = virtualDirectory.getVirtualPath() + "/" + fileName;
-            channelHandlerContext.writeAndFlush(LessMessageUtils.writeUploadFileOutDataToLessMessage(shortName, fileExt));
+            LOG.debug("文件保存成功，返回文件key={}", shortName);
+            channelHandlerContext.writeAndFlush(LessMessageUtils.writeUploadFileOutDataToLessMessage(lessMessage.getHeader().getSessionId(), shortName, fileExt));
         } else {
             channelHandlerContext.fireChannelRead(lessMessage);
         }

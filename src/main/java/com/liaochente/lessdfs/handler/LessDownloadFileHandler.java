@@ -40,9 +40,10 @@ public class LessDownloadFileHandler extends SimpleChannelInboundHandler<LessMes
             //查找要下载的文件
             if (path.toFile().exists()) {
                 byte[] data = Files.readAllBytes(path);
-                channelHandlerContext.writeAndFlush(LessMessageUtils.writeDownloadFileOutDataToLessMessage(fileName, data));
+                channelHandlerContext.writeAndFlush(LessMessageUtils.writeDownloadFileOutDataToLessMessage(lessMessage.getHeader().getSessionId(),
+                        fileName, data));
             } else {
-                channelHandlerContext.writeAndFlush(LessMessageUtils.writeErrorToLessMessage(LessMessageType.DOWNLOAD_FILE_OUT, LessStatus.NOT_FOUND));
+                channelHandlerContext.writeAndFlush(LessMessageUtils.writeErrorToLessMessage(LessMessageType.DOWNLOAD_FILE_OUT, lessMessage.getHeader().getSessionId(), LessStatus.NOT_FOUND));
             }
         } else {
             channelHandlerContext.fireChannelRead(lessMessage);

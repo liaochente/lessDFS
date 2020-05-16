@@ -6,7 +6,6 @@ import com.liaochente.lessdfs.protocol.LessMessage;
 import com.liaochente.lessdfs.protocol.LessMessageBody;
 import com.liaochente.lessdfs.protocol.LessMessageHeader;
 import com.liaochente.lessdfs.protocol.LessMessageType;
-import com.liaochente.lessdfs.protocol.body.data.AuthInBodyData;
 import com.liaochente.lessdfs.protocol.body.data.DeleteFileInBodyData;
 import com.liaochente.lessdfs.protocol.body.data.DownloadFileBodyData;
 import com.liaochente.lessdfs.protocol.body.data.UploadFileInBodyData;
@@ -21,22 +20,19 @@ public class LessMessageUtils {
 
     public final static Integer MAGIC_CODE = 0x294;
 
-    private static final Long FIXED_SESSION_ID = 654321L;
-
     /**
      * 生成操作失败应答报文
      *
      * @param lessStatus
      * @return
      */
-    public final static ByteBuf writeErrorToLessMessage(LessMessageType type, LessStatus lessStatus) {
+    public final static ByteBuf writeErrorToLessMessage(LessMessageType type, long sessionId, LessStatus lessStatus) {
         ByteBuf byteBuf = Unpooled.buffer(20);
         byteBuf.writeInt(MAGIC_CODE);
-        byteBuf.writeLong(0L);
+        byteBuf.writeLong(sessionId);
         byteBuf.writeByte((byte) type.getType());
         byteBuf.writeByte(0);
         byteBuf.writeByte((byte) lessStatus.getStatus());
-//        byteBuf.writeBytes(new byte[5]);//fixed
         byteBuf.writeInt(lessStatus.getMessage().length());
         byteBuf.writeBytes(lessStatus.getMessage().getBytes());
         return byteBuf;
@@ -49,14 +45,13 @@ public class LessMessageUtils {
      * @param fileExt
      * @return
      */
-    public final static ByteBuf writeUploadFileOutDataToLessMessage(String fileName, String fileExt) {
+    public final static ByteBuf writeUploadFileOutDataToLessMessage(long sessionId, String fileName, String fileExt) {
         ByteBuf byteBuf = Unpooled.buffer(20);
         byteBuf.writeInt(MAGIC_CODE);
-        byteBuf.writeLong(FIXED_SESSION_ID);
+        byteBuf.writeLong(sessionId);
         byteBuf.writeByte((byte) LessMessageType.UPLOAD_FILE_OUT.getType());
         byteBuf.writeByte(0);
         byteBuf.writeByte((byte) LessStatus.OK.getStatus());
-//        byteBuf.writeBytes(new byte[5]);//fixed
         byteBuf.writeInt(fileName.length());
         byteBuf.writeBytes(fileName.getBytes());
         byteBuf.writeInt(fileExt.length());
@@ -72,18 +67,15 @@ public class LessMessageUtils {
      * @param data
      * @return
      */
-    public final static ByteBuf writeDownloadFileOutDataToLessMessage(String fileName, byte[] data) {
+    public final static ByteBuf writeDownloadFileOutDataToLessMessage(long sessionId, String fileName, byte[] data) {
         ByteBuf byteBuf = Unpooled.buffer(20);
         byteBuf.writeInt(MAGIC_CODE);
-        byteBuf.writeLong(FIXED_SESSION_ID);
+        byteBuf.writeLong(sessionId);
         byteBuf.writeByte((byte) LessMessageType.DOWNLOAD_FILE_OUT.getType());
         byteBuf.writeByte(0);
         byteBuf.writeByte((byte) LessStatus.OK.getStatus());
-//        byteBuf.writeBytes(new byte[5]);//fixed
         byteBuf.writeInt(fileName.length());
         byteBuf.writeBytes(fileName.getBytes());
-//        byteBuf.writeInt(fileExt.length());
-//        byteBuf.writeBytes(fileExt.getBytes());
         byteBuf.writeInt(data.length);
         byteBuf.writeBytes(data);
 
@@ -95,15 +87,13 @@ public class LessMessageUtils {
      *
      * @return
      */
-    public final static ByteBuf writeDeleteFileOutDataToLessMessage() {
+    public final static ByteBuf writeDeleteFileOutDataToLessMessage(long sessionId) {
         ByteBuf byteBuf = Unpooled.buffer(20);
         byteBuf.writeInt(MAGIC_CODE);
-        byteBuf.writeLong(FIXED_SESSION_ID);
+        byteBuf.writeLong(sessionId);
         byteBuf.writeByte((byte) LessMessageType.DELETE_FILE_OUT.getType());
         byteBuf.writeByte(0);
         byteBuf.writeByte((byte) LessStatus.OK.getStatus());
-//        byteBuf.writeBytes(new byte[5]);//fixed
-
         return byteBuf;
     }
 
@@ -167,16 +157,6 @@ public class LessMessageUtils {
      */
     private final static LessMessageBody readByteBufToLessMessageBody(final LessMessageHeader header, final ByteBuf buf) {
         LessMessageBody body = new LessMessageBody();
-//        if (LessMessageType.LOGIN_IN == header.getType()) {
-//            //读取body.length
-//            int length = buf.readInt();
-//            byte[] bodyBytes = new byte[length];
-//            buf.readBytes(bodyBytes);
-//            String password = new String(bodyBytes);
-//            AuthInBodyData bodyData = new AuthInBodyData();
-//            bodyData.setPassword(password);
-//            body.setBo(bodyData);
-//        }
 
         if (LessMessageType.HEARTBEAT_IN == header.getType()) {
             //empty body
@@ -184,11 +164,6 @@ public class LessMessageUtils {
 
         if (LessMessageType.UPLOAD_FILE_IN == header.getType()) {
             byte[] tempBytes;
-//            int fileNameLength = buf.readInt();
-//            tempBytes = new byte[fileNameLength];
-//            buf.readBytes(tempBytes);
-//            String fileName = new String(tempBytes);
-
             int fileExtLength = buf.readInt();
             tempBytes = new byte[fileExtLength];
             buf.readBytes(tempBytes);
@@ -199,7 +174,6 @@ public class LessMessageUtils {
             buf.readBytes(data);
 
             UploadFileInBodyData bodyData = new UploadFileInBodyData();
-//            bodyData.setFileName(fileName);
             bodyData.setFileExt(fileExt);
             bodyData.setData(data);
             body.setBo(bodyData);

@@ -3,8 +3,6 @@ package com.liaochente.lessdfs.handler;
 import com.liaochente.lessdfs.constant.LessConfig;
 import com.liaochente.lessdfs.constant.LessStatus;
 import com.liaochente.lessdfs.protocol.LessMessage;
-import com.liaochente.lessdfs.protocol.LessMessageType;
-import com.liaochente.lessdfs.protocol.body.data.AuthInBodyData;
 import com.liaochente.lessdfs.util.LessMessageUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -21,12 +19,12 @@ public class LessAuthHandler extends SimpleChannelInboundHandler<LessMessage> {
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, LessMessage lessMessage) throws Exception {
         LOG.debug("收到{}, 进行认证, lessMessage = {}", lessMessage.getHeader().getType().getName(), lessMessage);
-        if(LessConfig.getPassword().equals(((AuthInBodyData) lessMessage.getBody().getBo()).getPassword())) {
+        if (LessConfig.getPassword().equals(lessMessage.getHeader().getPassword())) {
             LOG.debug("认证通过");
             channelHandlerContext.fireChannelRead(lessMessage);
         } else {
             LOG.debug("认证不通过，返回错误信息");
-            channelHandlerContext.writeAndFlush(LessMessageUtils.writeErrorToLessMessage(lessMessage.getHeader().getType(), LessStatus.FAIL));
+            channelHandlerContext.writeAndFlush(LessMessageUtils.writeErrorToLessMessage(lessMessage.getHeader().getType(), lessMessage.getHeader().getSessionId(), LessStatus.FAIL));
         }
     }
 
