@@ -48,18 +48,18 @@ public class LessMessageUtils {
      * @param sessionId
      * @return
      */
-    public final static ByteBuf writeAuthOutDataToLessMessage(long sessionId) {
-        ByteBuf byteBuf = Unpooled.buffer(20);
-        byteBuf.writeInt(MAGIC_CODE);
-        byteBuf.writeLong(sessionId);
-        byteBuf.writeByte((byte) LessMessageType.LOGIN_OUT.getType());
-        byteBuf.writeByte(0);
-        byteBuf.writeByte((byte) LessStatus.OK.getStatus());
-        byteBuf.writeBytes(new byte[5]);//fixed
-//        byteBuf.writeInt(LessStatus.OK.getMessage().length());
-//        byteBuf.writeBytes(LessStatus.OK.getMessage().getBytes());
-        return byteBuf;
-    }
+//    public final static ByteBuf writeAuthOutDataToLessMessage(long sessionId) {
+//        ByteBuf byteBuf = Unpooled.buffer(20);
+//        byteBuf.writeInt(MAGIC_CODE);
+//        byteBuf.writeLong(sessionId);
+//        byteBuf.writeByte((byte) LessMessageType.LOGIN_OUT.getType());
+//        byteBuf.writeByte(0);
+//        byteBuf.writeByte((byte) LessStatus.OK.getStatus());
+//        byteBuf.writeBytes(new byte[5]);//fixed
+////        byteBuf.writeInt(LessStatus.OK.getMessage().length());
+////        byteBuf.writeBytes(LessStatus.OK.getMessage().getBytes());
+//        return byteBuf;
+//    }
 
     /**
      * 生成文件上传应答报文
@@ -167,12 +167,13 @@ public class LessMessageUtils {
 
         byte priority = buf.readByte();
         byte status = buf.readByte();
-        //丢弃48位保留字节
-        ByteBuf placeholderByteBuf = buf.readBytes(5);
-        byte[] placeholder = new byte[placeholderByteBuf.readableBytes()];
-        placeholderByteBuf.writeBytes(placeholder);
 
-        LessMessageHeader header = new LessMessageHeader(magicCode, sessionId, LessMessageType.convert(type), priority, LessStatus.convert(status), placeholder);
+        int pwdLength = buf.readInt();
+        byte[] pwdBytes = new byte[pwdLength];
+        buf.readBytes(pwdBytes);
+        String password = new String(pwdBytes);
+
+        LessMessageHeader header = new LessMessageHeader(magicCode, sessionId, LessMessageType.convert(type), priority, LessStatus.convert(status), password);
         return header;
     }
 
@@ -185,16 +186,16 @@ public class LessMessageUtils {
      */
     private final static LessMessageBody readByteBufToLessMessageBody(final LessMessageHeader header, final ByteBuf buf) {
         LessMessageBody body = new LessMessageBody();
-        if (LessMessageType.LOGIN_IN == header.getType()) {
-            //读取body.length
-            int length = buf.readInt();
-            byte[] bodyBytes = new byte[length];
-            buf.readBytes(bodyBytes);
-            String password = new String(bodyBytes);
-            AuthInBodyData bodyData = new AuthInBodyData();
-            bodyData.setPassword(password);
-            body.setBo(bodyData);
-        }
+//        if (LessMessageType.LOGIN_IN == header.getType()) {
+//            //读取body.length
+//            int length = buf.readInt();
+//            byte[] bodyBytes = new byte[length];
+//            buf.readBytes(bodyBytes);
+//            String password = new String(bodyBytes);
+//            AuthInBodyData bodyData = new AuthInBodyData();
+//            bodyData.setPassword(password);
+//            body.setBo(bodyData);
+//        }
 
         if (LessMessageType.HEARTBEAT_IN == header.getType()) {
             //empty body

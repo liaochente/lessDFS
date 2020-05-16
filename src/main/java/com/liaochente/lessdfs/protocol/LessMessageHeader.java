@@ -23,18 +23,26 @@ public class LessMessageHeader implements Serializable {
 
     private LessStatus status;
 
-    private byte[] placeholder;
+    private String password;
 
     public LessMessageHeader() {
     }
 
-    public LessMessageHeader(Integer magicCode, Long sessionId, LessMessageType type, Byte priority, LessStatus status, byte[] placeholder) {
+    public LessMessageHeader(Integer magicCode, Long sessionId, LessMessageType type, Byte priority, LessStatus status, String password) {
         this.magicCode = magicCode;
         this.sessionId = sessionId;
         this.type = type;
         this.priority = priority;
-        this.placeholder = placeholder;
+        this.password = password;
         this.status = status;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public LessStatus getStatus() {
@@ -77,16 +85,8 @@ public class LessMessageHeader implements Serializable {
         this.priority = priority;
     }
 
-    public byte[] getPlaceholder() {
-        return placeholder;
-    }
-
-    public void setPlaceholder(byte[] placeholder) {
-        this.placeholder = placeholder;
-    }
-
     @Override
     public String toString() {
-        return "[magicCode:" + magicCode + ", sessionId:" + sessionId + ", type:" + type + ", priority:" + priority + ", placeholder:" + placeholder + "|" + (placeholder == null ? "0" : placeholder.length) + "]";
+        return "[magicCode:" + magicCode + ", sessionId:" + sessionId + ", type:" + type + ", priority:" + priority + ", password:" + password + "]";
     }
 }
