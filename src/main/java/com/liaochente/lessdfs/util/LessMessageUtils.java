@@ -36,30 +36,11 @@ public class LessMessageUtils {
         byteBuf.writeByte((byte) type.getType());
         byteBuf.writeByte(0);
         byteBuf.writeByte((byte) lessStatus.getStatus());
-        byteBuf.writeBytes(new byte[5]);//fixed
+//        byteBuf.writeBytes(new byte[5]);//fixed
         byteBuf.writeInt(lessStatus.getMessage().length());
         byteBuf.writeBytes(lessStatus.getMessage().getBytes());
         return byteBuf;
     }
-
-    /**
-     * 生成认证应答报文
-     *
-     * @param sessionId
-     * @return
-     */
-//    public final static ByteBuf writeAuthOutDataToLessMessage(long sessionId) {
-//        ByteBuf byteBuf = Unpooled.buffer(20);
-//        byteBuf.writeInt(MAGIC_CODE);
-//        byteBuf.writeLong(sessionId);
-//        byteBuf.writeByte((byte) LessMessageType.LOGIN_OUT.getType());
-//        byteBuf.writeByte(0);
-//        byteBuf.writeByte((byte) LessStatus.OK.getStatus());
-//        byteBuf.writeBytes(new byte[5]);//fixed
-////        byteBuf.writeInt(LessStatus.OK.getMessage().length());
-////        byteBuf.writeBytes(LessStatus.OK.getMessage().getBytes());
-//        return byteBuf;
-//    }
 
     /**
      * 生成文件上传应答报文
@@ -75,7 +56,7 @@ public class LessMessageUtils {
         byteBuf.writeByte((byte) LessMessageType.UPLOAD_FILE_OUT.getType());
         byteBuf.writeByte(0);
         byteBuf.writeByte((byte) LessStatus.OK.getStatus());
-        byteBuf.writeBytes(new byte[5]);//fixed
+//        byteBuf.writeBytes(new byte[5]);//fixed
         byteBuf.writeInt(fileName.length());
         byteBuf.writeBytes(fileName.getBytes());
         byteBuf.writeInt(fileExt.length());
@@ -98,7 +79,7 @@ public class LessMessageUtils {
         byteBuf.writeByte((byte) LessMessageType.DOWNLOAD_FILE_OUT.getType());
         byteBuf.writeByte(0);
         byteBuf.writeByte((byte) LessStatus.OK.getStatus());
-        byteBuf.writeBytes(new byte[5]);//fixed
+//        byteBuf.writeBytes(new byte[5]);//fixed
         byteBuf.writeInt(fileName.length());
         byteBuf.writeBytes(fileName.getBytes());
 //        byteBuf.writeInt(fileExt.length());
@@ -121,7 +102,7 @@ public class LessMessageUtils {
         byteBuf.writeByte((byte) LessMessageType.DELETE_FILE_OUT.getType());
         byteBuf.writeByte(0);
         byteBuf.writeByte((byte) LessStatus.OK.getStatus());
-        byteBuf.writeBytes(new byte[5]);//fixed
+//        byteBuf.writeBytes(new byte[5]);//fixed
 
         return byteBuf;
     }
