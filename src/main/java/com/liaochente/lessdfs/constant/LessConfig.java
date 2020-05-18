@@ -187,7 +187,7 @@ public class LessConfig {
     }
 
     /**
-     *
+     * 获取文件存储的真实路径
      *
      * @param path
      * @return
