@@ -49,9 +49,6 @@ public class LessConfig {
 
     private final static List<VirtualDirectory> VIRTUAL_DIRECTORIES = new ArrayList<>();
 
-    @Deprecated
-    public final static Map<String, FileItem> FILE_INDEXS = new ConcurrentHashMap<>();
-
     public static class VirtualDirectory implements Serializable {
         private Path realPath;
 
@@ -87,56 +84,6 @@ public class LessConfig {
 
         public void setWeight(long weight) {
             this.weight = weight;
-        }
-    }
-
-    @Deprecated
-    private static class FileItem implements Serializable {
-        private String filePath;
-
-        private String fileName;
-
-        private String fileExt;
-
-        private String group;
-
-        public FileItem(String filePath, String fileName, String fileExt, String group) {
-            this.filePath = filePath;
-            this.fileName = fileName;
-            this.fileExt = fileExt;
-            this.group = group;
-        }
-
-        public String getFilePath() {
-            return filePath;
-        }
-
-        public void setFilePath(String filePath) {
-            this.filePath = filePath;
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public void setFileName(String fileName) {
-            this.fileName = fileName;
-        }
-
-        public String getFileExt() {
-            return fileExt;
-        }
-
-        public void setFileExt(String fileExt) {
-            this.fileExt = fileExt;
-        }
-
-        public String getGroup() {
-            return group;
-        }
-
-        public void setGroup(String group) {
-            this.group = group;
         }
     }
 

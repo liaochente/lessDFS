@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * LessDFS启动引导
  */
 public class LessDFSBootstrap {
 
