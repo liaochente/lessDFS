@@ -30,8 +30,6 @@ public class LessAuthHandler extends SimpleChannelInboundHandler<LessMessage> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        LOG.error("认证异常", cause);
-        return;
-//        super.exceptionCaught(ctx, cause);
+        super.exceptionCaught(ctx, cause);
     }
 }

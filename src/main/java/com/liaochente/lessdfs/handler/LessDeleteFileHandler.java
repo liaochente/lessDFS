@@ -28,7 +28,9 @@ public class LessDeleteFileHandler extends SimpleChannelInboundHandler<LessMessa
             DeleteFileInBodyData bodyData = (DeleteFileInBodyData) lessMessage.getBody().getBo();
             String fileName = bodyData.getFileName();
             String filePath = LessConfig.getFileRealPath(fileName);
-            Files.delete(Paths.get(filePath));
+            if (Paths.get(filePath).toFile().exists()) {
+                Files.delete(Paths.get(filePath));
+            }
             channelHandlerContext.writeAndFlush(LessMessageUtils.writeDeleteFileOutDataToLessMessage(lessMessage.getHeader().getSessionId()));
         } else {
             channelHandlerContext.fireChannelRead(lessMessage);
@@ -37,7 +39,6 @@ public class LessDeleteFileHandler extends SimpleChannelInboundHandler<LessMessa
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        LOG.error("exceptionCaught");
         super.exceptionCaught(ctx, cause);
     }
 }

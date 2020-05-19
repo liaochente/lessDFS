@@ -34,7 +34,6 @@ public class LessDecodeHandler extends ByteToMessageDecoder {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        LOG.error("解码异常", cause);
-        return;
+        super.exceptionCaught(ctx, cause);
     }
 }

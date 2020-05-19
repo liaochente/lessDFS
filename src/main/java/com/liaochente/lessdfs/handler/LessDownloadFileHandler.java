@@ -52,7 +52,6 @@ public class LessDownloadFileHandler extends SimpleChannelInboundHandler<LessMes
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        LOG.error("exceptionCaught");
         super.exceptionCaught(ctx, cause);
     }
 }
