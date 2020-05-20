@@ -1,6 +1,7 @@
 package com.liaochente.lessdfs.handler;
 
 import com.liaochente.lessdfs.constant.LessConfig;
+import com.liaochente.lessdfs.constant.LessStatus;
 import com.liaochente.lessdfs.protocol.LessMessage;
 import com.liaochente.lessdfs.protocol.LessMessageType;
 import com.liaochente.lessdfs.protocol.body.data.DeleteFileInBodyData;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 

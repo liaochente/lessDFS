@@ -14,11 +14,8 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class LessConfig {
-    public final static ThreadPoolExecutor GLOBAL_THREAD_POOL = new ThreadPoolExecutor(10, 10, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(64));
 
     public final static ScheduledThreadPoolExecutor GLOBAL_SCHEDULED_THREAD_POOL = new ScheduledThreadPoolExecutor(8);
-
-    public final static int MAGIC_CODE = 0x294;
 
     @LessValue("less.server.data_path")
     private static String dataDir = "";

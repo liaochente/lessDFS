@@ -1,6 +1,5 @@
 package com.liaochente.lessdfs.util;
 
-import com.liaochente.lessdfs.constant.LessConfig;
 import com.liaochente.lessdfs.constant.LessStatus;
 import com.liaochente.lessdfs.protocol.LessMessage;
 import com.liaochente.lessdfs.protocol.LessMessageBody;
@@ -124,7 +123,7 @@ public class LessMessageUtils {
     private final static LessMessageHeader readByteBufToLessMessageHeader(final ByteBuf buf) {
         Integer magicCode = buf.readInt();
         LOG.debug("读取到头部标记 magicCode={}", magicCode);
-        if (magicCode != LessConfig.MAGIC_CODE) {
+        if (magicCode != MAGIC_CODE) {
             LOG.debug("error|文件头不正确");
             //todo exception
             throw new RuntimeException("error: 文件头不正确");

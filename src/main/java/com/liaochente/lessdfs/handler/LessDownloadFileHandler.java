@@ -11,6 +11,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,12 +28,12 @@ public class LessDownloadFileHandler extends SimpleChannelInboundHandler<LessMes
         if (lessMessage.getHeader().getType() == LessMessageType.DOWNLOAD_FILE_IN) {
             LOG.debug("对方想要下载文件 >>> {}", ((DownloadFileBodyData) lessMessage.getBody().getBo()).getFileName());
 
-            /*
-                存储路径规则：虚拟目录的实际路径 + 随机用户名
-                返给客户端用于下载的key = 虚拟目录的虚拟名称 + 随机用户名
-                基于以上规则，读取文件时，需要先解析出“虚拟目录的虚拟名称”，然后寻找到真正的存储路径进行read
-                example:key = M0/testfile
-             */
+                /*
+                    存储路径规则：虚拟目录的实际路径 + 随机用户名
+                    返给客户端用于下载的key = 虚拟目录的虚拟名称 + 随机用户名
+                    基于以上规则，读取文件时，需要先解析出“虚拟目录的虚拟名称”，然后寻找到真正的存储路径进行read
+                    example:key = M0/testfile
+                 */
             DownloadFileBodyData bodyData = (DownloadFileBodyData) lessMessage.getBody().getBo();
             String fileName = bodyData.getFileName();
             String filePath = LessConfig.getFileRealPath(fileName);

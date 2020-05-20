@@ -1,8 +1,5 @@
 package com.liaochente.lessdfs.main;
 
-import java.io.IOException;
-import java.lang.System;
-
 import com.liaochente.lessdfs.constant.LessConfig;
 import com.liaochente.lessdfs.handler.*;
 import io.netty.bootstrap.ServerBootstrap;
@@ -19,6 +16,8 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * LessDFS启动引导
@@ -60,6 +59,7 @@ public class LessDFSBootstrap {
                             socketChannel.pipeline().addLast(new LessUploadFileHandler());
                             socketChannel.pipeline().addLast(new LessDownloadFileHandler());
                             socketChannel.pipeline().addLast(new LessDeleteFileHandler());
+                            socketChannel.pipeline().addLast(new LessExceptionHandler());
 //                            socketChannel.pipeline().addLast(new IdleStateHandler(60,60,120, TimeUnit.SECONDS));
 
                         }
