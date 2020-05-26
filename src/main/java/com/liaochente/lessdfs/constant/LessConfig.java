@@ -1,8 +1,8 @@
 package com.liaochente.lessdfs.constant;
 
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.lang.reflect.Field;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -106,8 +106,20 @@ public class LessConfig {
      * @throws IOException
      */
     private final static Map<String, String> loadConfig() throws IOException {
-        String path = LessConfig.class.getClassLoader().getResource("less.conf").getPath();
-        List<String> configLines = Files.readAllLines(Paths.get(path));
+        List<String> configLines = new ArrayList<>();
+        try (
+                InputStream inputStream = LessConfig.class.getClassLoader().getResourceAsStream("less.conf");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))
+        ) {
+            while (true) {
+                String line = reader.readLine();
+                if (line == null) {
+                    break;
+                }
+                configLines.add(line);
+            }
+        }
+
         Map<String, String> configMap = configLines.stream()
                 .filter((configLine) -> configLine.trim().indexOf("#") == -1)
                 .map((configLine) -> configLine.split("="))

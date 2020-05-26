@@ -123,7 +123,7 @@ public class LessMessageUtils {
     private final static LessMessageHeader readByteBufToLessMessageHeader(final ByteBuf buf) {
         Integer magicCode = buf.readInt();
         LOG.debug("读取到头部标记 magicCode={}", magicCode);
-        if (magicCode != MAGIC_CODE) {
+        if (!MAGIC_CODE.equals(magicCode)) {
             LOG.debug("error|文件头不正确");
             //todo exception
             throw new RuntimeException("error: 文件头不正确");
