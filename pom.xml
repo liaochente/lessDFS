@@ -9,7 +9,6 @@
     <version>1.0-SNAPSHOT</version>
 
     <name>lessDFS</name>
-    <!-- FIXME change it to the project's website -->
     <url>http://www.example.com</url>
 
     <properties>
@@ -32,76 +31,31 @@
             <artifactId>netty-all</artifactId>
             <version>4.1.49.Final</version>
         </dependency>
-
         <!-- 导入slf4j的接口包以及对应日志框架的驱动包 -->
-
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-
         <dependency>
-
             <groupId>org.slf4j</groupId>
-
             <artifactId>slf4j-api</artifactId>
-
             <version>${slf4j.version}</version>
-
         </dependency>
-
-        <!--用于slf4j与log4j2保持桥接 -->
-
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl -->
-
         <dependency>
-
             <groupId>org.apache.logging.log4j</groupId>
-
             <artifactId>log4j-slf4j-impl</artifactId>
-
-            <scope>runtime</scope>
-
             <version>${log4j.version}</version>
-
         </dependency>
-
-
-        <!-- 导入日志框架核心包与接口包 -->
-
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-
         <dependency>
-
             <groupId>org.apache.logging.log4j</groupId>
-
             <artifactId>log4j-core</artifactId>
-
-            <scope>runtime</scope>
-
             <version>${log4j.version}</version>
-
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
-
         <dependency>
-
             <groupId>org.apache.logging.log4j</groupId>
-
             <artifactId>log4j-api</artifactId>
-
             <version>${log4j.version}</version>
-
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.10.3</version>
         </dependency>
     </dependencies>
 
     <build>
-        <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+        <pluginManagement>
             <plugins>
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>

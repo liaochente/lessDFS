@@ -47,16 +47,45 @@ public class LessConfig {
     private final static List<VirtualDirectory> VIRTUAL_DIRECTORIES = new ArrayList<>();
 
     public static class VirtualDirectory implements Serializable {
+
+        private final static String[] SUB_DIRECTORYS = new String[256];
+
         private Path realPath;
 
         private String virtualPath;
 
         private volatile long weight;
 
-        public VirtualDirectory(Path realPath, String virtualPath, long weight) {
-            this.realPath = realPath;
+        public VirtualDirectory(String realPath, String virtualPath) throws IOException {
+            this.realPath = Paths.get(realPath);
             this.virtualPath = virtualPath;
-            this.weight = weight;
+            this.weight = this.realPath.toFile().getUsableSpace();
+
+            if (!Files.exists(this.realPath, LinkOption.NOFOLLOW_LINKS)) {
+                Files.createDirectory(this.realPath);
+            }
+
+            //init subDirectorys
+            for (int i = 0; i < SUB_DIRECTORYS.length; i++) {
+                StringBuffer sb = new StringBuffer();
+                String hexStr = Integer.toHexString(i);
+                if (hexStr.length() < 2) {
+                    sb.append(0);
+                }
+                sb.append(hexStr);
+
+                SUB_DIRECTORYS[i] = sb.toString().toUpperCase();
+            }
+
+            //create sub directorys
+            for (String firstFID : SUB_DIRECTORYS) {
+                for (String secondFID : SUB_DIRECTORYS) {
+                    Path secondFIDPath = Paths.get(this.realPath.toString() + "/" + firstFID + "/" + secondFID);
+                    if (!Files.exists(secondFIDPath, LinkOption.NOFOLLOW_LINKS)) {
+                        Files.createDirectories(secondFIDPath);
+                    }
+                }
+            }
         }
 
         public Path getRealPath() {
@@ -165,12 +194,7 @@ public class LessConfig {
 
         int index = 0;
         for (String storageRealPath : storageRealPaths) {
-            Path path = Paths.get(storageRealPath);
-            if (!Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
-                Files.createDirectory(path);
-            }
-
-            VirtualDirectory entry = new VirtualDirectory(path, "L" + index, path.toFile().getUsableSpace());
+            VirtualDirectory entry = new VirtualDirectory(storageRealPath, "L" + index);
             VIRTUAL_DIRECTORIES.add(entry);
         }
 
