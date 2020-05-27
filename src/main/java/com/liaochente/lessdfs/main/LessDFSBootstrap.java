@@ -37,8 +37,8 @@ public class LessDFSBootstrap {
     }
 
     private final static void start() {
-        EventLoopGroup bossLoopGroup = new NioEventLoopGroup();
-        EventLoopGroup workerLoopGroup = new NioEventLoopGroup();
+        EventLoopGroup bossLoopGroup = new NioEventLoopGroup(LessConfig.getBossgroup());
+        EventLoopGroup workerLoopGroup = new NioEventLoopGroup(LessConfig.getWorkgroup());
 
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -64,7 +64,7 @@ public class LessDFSBootstrap {
 
                         }
                     });
-            ChannelFuture future = serverBootstrap.bind(8888).sync();
+            ChannelFuture future = serverBootstrap.bind(LessConfig.getPort()).sync();
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             LOG.error("LessDFS 服务中断", e);

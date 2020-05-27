@@ -2,6 +2,7 @@ package com.liaochente.lessdfs.handler;
 
 import com.liaochente.lessdfs.constant.LessConfig;
 import com.liaochente.lessdfs.constant.LessStatus;
+import com.liaochente.lessdfs.disk.VirtualDirectory;
 import com.liaochente.lessdfs.protocol.LessMessage;
 import com.liaochente.lessdfs.protocol.LessMessageType;
 import com.liaochente.lessdfs.protocol.body.data.UploadFileInBodyData;
@@ -30,7 +31,7 @@ public class LessUploadFileHandler extends SimpleChannelInboundHandler<LessMessa
 
             UploadFileInBodyData bodyData = (UploadFileInBodyData) lessMessage.getBody().getBo();
             byte[] data = bodyData.getData();
-            LessConfig.VirtualDirectory virtualDirectory = LessConfig.getVirtualDirectory();
+            VirtualDirectory virtualDirectory = LessConfig.getVirtualDirectory();
             String groupPath = LessConfig.getGroup();
             String fileExt = bodyData.getFileExt();
                 /*

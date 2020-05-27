@@ -1,5 +1,7 @@
 package com.liaochente.lessdfs.constant;
 
+import com.liaochente.lessdfs.disk.VirtualDirectory;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
@@ -45,73 +47,6 @@ public class LessConfig {
     private static int maxFrameLength = 102400;
 
     private final static List<VirtualDirectory> VIRTUAL_DIRECTORIES = new ArrayList<>();
-
-    public static class VirtualDirectory implements Serializable {
-
-        private final static String[] SUB_DIRECTORYS = new String[256];
-
-        private Path realPath;
-
-        private String virtualPath;
-
-        private volatile long weight;
-
-        public VirtualDirectory(String realPath, String virtualPath) throws IOException {
-            this.realPath = Paths.get(realPath);
-            this.virtualPath = virtualPath;
-            this.weight = this.realPath.toFile().getUsableSpace();
-
-            if (!Files.exists(this.realPath, LinkOption.NOFOLLOW_LINKS)) {
-                Files.createDirectory(this.realPath);
-            }
-
-            //init subDirectorys
-            for (int i = 0; i < SUB_DIRECTORYS.length; i++) {
-                StringBuffer sb = new StringBuffer();
-                String hexStr = Integer.toHexString(i);
-                if (hexStr.length() < 2) {
-                    sb.append(0);
-                }
-                sb.append(hexStr);
-
-                SUB_DIRECTORYS[i] = sb.toString().toUpperCase();
-            }
-
-            //create sub directorys
-            for (String firstFID : SUB_DIRECTORYS) {
-                for (String secondFID : SUB_DIRECTORYS) {
-                    Path secondFIDPath = Paths.get(this.realPath.toString() + "/" + firstFID + "/" + secondFID);
-                    if (!Files.exists(secondFIDPath, LinkOption.NOFOLLOW_LINKS)) {
-                        Files.createDirectories(secondFIDPath);
-                    }
-                }
-            }
-        }
-
-        public Path getRealPath() {
-            return realPath;
-        }
-
-        public void setRealPath(Path realPath) {
-            this.realPath = realPath;
-        }
-
-        public String getVirtualPath() {
-            return virtualPath;
-        }
-
-        public void setVirtualPath(String virtualPath) {
-            this.virtualPath = virtualPath;
-        }
-
-        public long getWeight() {
-            return weight;
-        }
-
-        public void setWeight(long weight) {
-            this.weight = weight;
-        }
-    }
 
     private LessConfig() {
 
@@ -230,14 +165,6 @@ public class LessConfig {
         String virtualPath = path.substring(0, path.indexOf("/"));
         VirtualDirectory virtualDirectory = VIRTUAL_DIRECTORIES.stream().filter((e) -> virtualPath.equals(e.getVirtualPath())).collect(Collectors.toList()).get(0);
         return virtualDirectory.getRealPath().toString() + "/" + fileName;
-    }
-
-    public static String getDataDir() {
-        return dataDir;
-    }
-
-    public static String getStorageDir() {
-        return storageDir;
     }
 
     public static String getGroup() {
