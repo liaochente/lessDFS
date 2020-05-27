@@ -1,14 +1,7 @@
 package com.liaochente.lessdfs.constant;
 
-import com.liaochente.lessdfs.disk.VirtualDirectory;
-
 import java.io.*;
 import java.lang.reflect.Field;
-import java.net.URLDecoder;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +10,6 @@ import java.util.stream.Collectors;
 
 public class LessConfig {
 
-    public final static ScheduledThreadPoolExecutor GLOBAL_SCHEDULED_THREAD_POOL = new ScheduledThreadPoolExecutor(8);
 
     @LessValue("less.server.data_path")
     private static String dataDir = "";
@@ -46,8 +38,6 @@ public class LessConfig {
     @LessValue("less.server.max_frame_length")
     private static int maxFrameLength = 102400;
 
-    private final static List<VirtualDirectory> VIRTUAL_DIRECTORIES = new ArrayList<>();
-
     private LessConfig() {
 
     }
@@ -60,7 +50,6 @@ public class LessConfig {
     public final static void init() throws IOException, IllegalAccessException {
         Map<String, String> configMap = loadConfig();
         autowiredConfig(configMap);
-        autowiredVirtualDirectory();
     }
 
     /**
@@ -118,53 +107,8 @@ public class LessConfig {
         }
     }
 
-    /**
-     * 初始化虚拟目录信息
-     * 1.生成虚拟目录到实际存储目录的映射关系
-     * 2.启动定时任务轮询各个目录的可用空间大小，然后进行排序方便后续使用
-     */
-    private final static void autowiredVirtualDirectory() throws IOException {
-        //初始化实际存储目录和虚拟目录之间的关系
-        String[] storageRealPaths = storageDir.split(",");
-
-        int index = 0;
-        for (String storageRealPath : storageRealPaths) {
-            VirtualDirectory entry = new VirtualDirectory(storageRealPath, "L" + index);
-            VIRTUAL_DIRECTORIES.add(entry);
-        }
-
-        if (VIRTUAL_DIRECTORIES.size() > 1) {
-            GLOBAL_SCHEDULED_THREAD_POOL.scheduleAtFixedRate(() -> {
-                VIRTUAL_DIRECTORIES.forEach((e) -> {
-                    Path path = e.getRealPath();
-                    e.setWeight(path.toFile().getUsableSpace());
-                });
-
-                VIRTUAL_DIRECTORIES.sort((o1, o2) -> (int) (o1.getWeight() - o2.getWeight()));
-            }, 60, 60, TimeUnit.SECONDS);
-        }
-    }
-
-    /**
-     * 获得一个可存储的虚拟目录
-     *
-     * @return
-     */
-    public static VirtualDirectory getVirtualDirectory() {
-        return VIRTUAL_DIRECTORIES.get(0);
-    }
-
-    /**
-     * 获取文件存储的真实路径
-     *
-     * @param path
-     * @return
-     */
-    public static String getFileRealPath(String path) {
-        String fileName = path.substring(path.indexOf("/") + 1);
-        String virtualPath = path.substring(0, path.indexOf("/"));
-        VirtualDirectory virtualDirectory = VIRTUAL_DIRECTORIES.stream().filter((e) -> virtualPath.equals(e.getVirtualPath())).collect(Collectors.toList()).get(0);
-        return virtualDirectory.getRealPath().toString() + "/" + fileName;
+    public static String getStorageDir() {
+        return storageDir;
     }
 
     public static String getGroup() {

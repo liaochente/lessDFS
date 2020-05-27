@@ -2,6 +2,7 @@ package com.liaochente.lessdfs.handler;
 
 import com.liaochente.lessdfs.constant.LessConfig;
 import com.liaochente.lessdfs.constant.LessStatus;
+import com.liaochente.lessdfs.disk.VirtualDirectoryFactory;
 import com.liaochente.lessdfs.protocol.LessMessage;
 import com.liaochente.lessdfs.protocol.LessMessageType;
 import com.liaochente.lessdfs.protocol.body.data.DeleteFileInBodyData;
@@ -29,7 +30,7 @@ public class LessDeleteFileHandler extends SimpleChannelInboundHandler<LessMessa
         if (lessMessage.getHeader().getType() == LessMessageType.DELETE_FILE_IN) {
             DeleteFileInBodyData bodyData = (DeleteFileInBodyData) lessMessage.getBody().getBo();
             String fileName = bodyData.getFileName();
-            String filePath = LessConfig.getFileRealPath(fileName);
+            String filePath = VirtualDirectoryFactory.getFileRealPath(fileName);
             if (Paths.get(filePath).toFile().exists()) {
                 Files.delete(Paths.get(filePath));
             }

@@ -2,6 +2,7 @@ package com.liaochente.lessdfs.handler;
 
 import com.liaochente.lessdfs.constant.LessConfig;
 import com.liaochente.lessdfs.constant.LessStatus;
+import com.liaochente.lessdfs.disk.VirtualDirectoryFactory;
 import com.liaochente.lessdfs.protocol.LessMessage;
 import com.liaochente.lessdfs.protocol.LessMessageType;
 import com.liaochente.lessdfs.protocol.body.data.DownloadFileBodyData;
@@ -36,7 +37,7 @@ public class LessDownloadFileHandler extends SimpleChannelInboundHandler<LessMes
                  */
             DownloadFileBodyData bodyData = (DownloadFileBodyData) lessMessage.getBody().getBo();
             String fileName = bodyData.getFileName();
-            String filePath = LessConfig.getFileRealPath(fileName);
+            String filePath = VirtualDirectoryFactory.getFileRealPath(fileName);
             Path path = Paths.get(filePath);
             //查找要下载的文件
             if (path.toFile().exists()) {

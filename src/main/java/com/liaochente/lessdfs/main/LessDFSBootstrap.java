@@ -1,6 +1,7 @@
 package com.liaochente.lessdfs.main;
 
 import com.liaochente.lessdfs.constant.LessConfig;
+import com.liaochente.lessdfs.disk.VirtualDirectoryFactory;
 import com.liaochente.lessdfs.handler.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -29,6 +30,7 @@ public class LessDFSBootstrap {
     public static void main(String[] args) {
         try {
             LessConfig.init();
+            VirtualDirectoryFactory.init();
         } catch (IOException | IllegalAccessException e) {
             LOG.error("初始化配置文件失败", e);
             return;

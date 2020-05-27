@@ -3,6 +3,7 @@ package com.liaochente.lessdfs.handler;
 import com.liaochente.lessdfs.constant.LessConfig;
 import com.liaochente.lessdfs.constant.LessStatus;
 import com.liaochente.lessdfs.disk.VirtualDirectory;
+import com.liaochente.lessdfs.disk.VirtualDirectoryFactory;
 import com.liaochente.lessdfs.protocol.LessMessage;
 import com.liaochente.lessdfs.protocol.LessMessageType;
 import com.liaochente.lessdfs.protocol.body.data.UploadFileInBodyData;
@@ -31,7 +32,7 @@ public class LessUploadFileHandler extends SimpleChannelInboundHandler<LessMessa
 
             UploadFileInBodyData bodyData = (UploadFileInBodyData) lessMessage.getBody().getBo();
             byte[] data = bodyData.getData();
-            VirtualDirectory virtualDirectory = LessConfig.getVirtualDirectory();
+            VirtualDirectory virtualDirectory = VirtualDirectoryFactory.getVirtualDirectory();
             String groupPath = LessConfig.getGroup();
             String fileExt = bodyData.getFileExt();
                 /*
@@ -39,9 +40,9 @@ public class LessUploadFileHandler extends SimpleChannelInboundHandler<LessMessa
                     返给客户端用于下载的key = 虚拟目录的虚拟名称 + 随机用户名
                  */
             String fileName = UUID.randomUUID().toString().replaceAll("-", "");
-            String filePath = virtualDirectory.getRealPath().toString() + "/" + fileName;
+            String filePath = virtualDirectory.getAbsolutePath() + "/" + fileName;
             Files.write(Paths.get(filePath), data);
-            String shortName = virtualDirectory.getVirtualPath() + "/" + fileName;
+            String shortName = virtualDirectory.getDrive() + "/" + fileName;
             LOG.debug("文件保存成功，返回文件key={}", shortName);
             channelHandlerContext.writeAndFlush(LessMessageUtils.writeUploadFileOutDataToLessMessage(lessMessage.getHeader().getSessionId(), shortName, fileExt));
         } else {
