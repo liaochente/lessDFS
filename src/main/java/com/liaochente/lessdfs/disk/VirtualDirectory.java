@@ -59,7 +59,7 @@ public class VirtualDirectory implements Serializable {
         }
 
         //create storage node
-        String[] drives = createDrives(2);
+        String[] drives = createDrives(256);
         for (String fid1 : drives) {
             for (String fid2 : drives) {
                 StorageNode storageNode = new StorageNode(this.absolutePath, this.drive, fid1, fid2);
