@@ -30,7 +30,7 @@ public class LessDeleteFileHandler extends SimpleChannelInboundHandler<LessMessa
         if (lessMessage.getHeader().getType() == LessMessageType.DELETE_FILE_IN) {
             DeleteFileInBodyData bodyData = (DeleteFileInBodyData) lessMessage.getBody().getBo();
             String fileName = bodyData.getFileName();
-            String filePath = VirtualDirectoryFactory.getFileRealPath(fileName);
+            String filePath = VirtualDirectoryFactory.searchFile(fileName);
             if (Paths.get(filePath).toFile().exists()) {
                 Files.delete(Paths.get(filePath));
             }

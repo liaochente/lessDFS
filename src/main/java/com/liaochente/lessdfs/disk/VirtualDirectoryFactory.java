@@ -1,6 +1,7 @@
 package com.liaochente.lessdfs.disk;
 
 import com.liaochente.lessdfs.constant.LessConfig;
+import com.liaochente.lessdfs.util.SystemUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -20,7 +21,7 @@ public class VirtualDirectoryFactory {
     /**
      * 定时任务
      */
-    public final static ScheduledThreadPoolExecutor GLOBAL_SCHEDULED_THREAD_POOL = new ScheduledThreadPoolExecutor(8);
+    private final static ScheduledThreadPoolExecutor GLOBAL_SCHEDULED_THREAD_POOL = new ScheduledThreadPoolExecutor(8);
 
     /**
      * 当前所有可用存储节点
@@ -56,15 +57,18 @@ public class VirtualDirectoryFactory {
 
     /**
      * 获取文件存储的真实路径
+     * file key example: L0/00/00/abcdasdadsad
      *
-     * @param path
+     * @param fileKey
      * @return
      */
-    public static String getFileRealPath(String path) {
-        String fileName = path.substring(path.indexOf("/") + 1);
-        String virtualPath = path.substring(0, path.indexOf("/"));
-        VirtualDirectory virtualDirectory = VIRTUAL_DIRECTORIES.stream().filter((e) -> virtualPath.equals(e.getDrive())).collect(Collectors.toList()).get(0);
-        return virtualDirectory.getAbsolutePath() + "/" + fileName;
+    public static String searchFile(String fileKey) {
+        int flag = fileKey.indexOf("/");
+        String relativePath = fileKey.substring(flag + 1);
+        String virtualDrive = fileKey.substring(0, flag);
+
+        VirtualDirectory virtualDirectory = VIRTUAL_DIRECTORIES.stream().filter((e) -> virtualDrive.equals(e.getDrive())).collect(Collectors.toList()).get(0);
+        return virtualDirectory.getAbsolutePath() + "/" + relativePath;
     }
 
     /**
@@ -77,11 +81,23 @@ public class VirtualDirectoryFactory {
     }
 
     /**
+     * 获取最佳存储节点
+     *
+     * @return
+     */
+    public static StorageNode getBestStorageNode(byte[] fileBytes, String fileExt) {
+        String fileMD5 = SystemUtils.md5String(fileBytes);
+        VirtualDirectory virtualDirectory = getVirtualDirectory();
+        List<StorageNode> storageNodes = virtualDirectory.getNodes();
+        return storageNodes.get(fileMD5.hashCode() % storageNodes.size());
+    }
+
+    /**
      * 获得一个可用的存储节点
      *
      * @return
      */
-    public static VirtualDirectory getVirtualDirectory() {
+    private static VirtualDirectory getVirtualDirectory() {
         return VIRTUAL_DIRECTORIES.get(0);
     }
 }

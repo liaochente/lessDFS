@@ -13,6 +13,8 @@ import java.nio.file.Paths;
  */
 public class StorageNode implements Serializable {
 
+    private String virtualDirectoryDrive;
+
     /**
      * 父级目录盘符
      */
@@ -35,7 +37,8 @@ public class StorageNode implements Serializable {
      * @param drive 盘符
      * @throws IOException
      */
-    public StorageNode(String virtualDirectoryPath, String parentDrive, String drive) throws IOException {
+    public StorageNode(String virtualDirectoryPath, String virtualDirectoryDrive, String parentDrive, String drive) throws IOException {
+        this.virtualDirectoryDrive = virtualDirectoryDrive;
         this.parentDrive = parentDrive;
         this.drive = drive;
         this.absolutePath = virtualDirectoryPath + "/" + parentDrive + "/" + drive;
@@ -44,5 +47,21 @@ public class StorageNode implements Serializable {
         if (!Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
             Files.createDirectories(path);
         }
+    }
+
+    public String getVirtualDirectoryDrive() {
+        return virtualDirectoryDrive;
+    }
+
+    public String getParentDrive() {
+        return parentDrive;
+    }
+
+    public String getDrive() {
+        return drive;
+    }
+
+    public String getAbsolutePath() {
+        return absolutePath;
     }
 }

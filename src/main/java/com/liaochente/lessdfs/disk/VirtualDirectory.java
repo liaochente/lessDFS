@@ -18,7 +18,7 @@ public class VirtualDirectory implements Serializable {
     /**
      * 子目录盘符
      */
-    private final static List<StorageNode> NODES = new ArrayList<>();
+    private List<StorageNode> nodes = new ArrayList<>(65536);
 
     /**
      * 目录绝对路径
@@ -59,11 +59,11 @@ public class VirtualDirectory implements Serializable {
         }
 
         //create storage node
-        String[] drives = createDrives(256);
+        String[] drives = createDrives(2);
         for (String fid1 : drives) {
             for (String fid2 : drives) {
-                StorageNode storageNode = new StorageNode(this.absolutePath, fid1, fid2);
-                NODES.add(storageNode);
+                StorageNode storageNode = new StorageNode(this.absolutePath, this.drive, fid1, fid2);
+                nodes.add(storageNode);
             }
         }
     }
@@ -95,6 +95,10 @@ public class VirtualDirectory implements Serializable {
 
     public String getDrive() {
         return drive;
+    }
+
+    public List<StorageNode> getNodes() {
+        return nodes;
     }
 
     public long getWeight() {

@@ -1,8 +1,6 @@
 package com.liaochente.lessdfs.handler;
 
-import com.liaochente.lessdfs.constant.LessConfig;
-import com.liaochente.lessdfs.constant.LessStatus;
-import com.liaochente.lessdfs.disk.VirtualDirectory;
+import com.liaochente.lessdfs.disk.StorageNode;
 import com.liaochente.lessdfs.disk.VirtualDirectoryFactory;
 import com.liaochente.lessdfs.protocol.LessMessage;
 import com.liaochente.lessdfs.protocol.LessMessageType;
@@ -13,7 +11,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -32,19 +29,27 @@ public class LessUploadFileHandler extends SimpleChannelInboundHandler<LessMessa
 
             UploadFileInBodyData bodyData = (UploadFileInBodyData) lessMessage.getBody().getBo();
             byte[] data = bodyData.getData();
-            VirtualDirectory virtualDirectory = VirtualDirectoryFactory.getVirtualDirectory();
-            String groupPath = LessConfig.getGroup();
             String fileExt = bodyData.getFileExt();
-                /*
-                    存储路径规则：虚拟目录的实际路径 + 随机用户名
-                    返给客户端用于下载的key = 虚拟目录的虚拟名称 + 随机用户名
-                 */
             String fileName = UUID.randomUUID().toString().replaceAll("-", "");
-            String filePath = virtualDirectory.getAbsolutePath() + "/" + fileName;
+
+            StorageNode storageNode = VirtualDirectoryFactory.getBestStorageNode(data, fileExt);
+            String absolutePath = storageNode.getAbsolutePath();
+            String filePath = absolutePath + "/" + fileName;
             Files.write(Paths.get(filePath), data);
-            String shortName = virtualDirectory.getDrive() + "/" + fileName;
-            LOG.debug("文件保存成功，返回文件key={}", shortName);
-            channelHandlerContext.writeAndFlush(LessMessageUtils.writeUploadFileOutDataToLessMessage(lessMessage.getHeader().getSessionId(), shortName, fileExt));
+
+            //file key: 用于返给客户端使用
+            StringBuffer shotName = new StringBuffer(storageNode.getVirtualDirectoryDrive());
+            shotName.append("/");
+            shotName.append(storageNode.getParentDrive());
+            shotName.append("/");
+            shotName.append(storageNode.getDrive());
+            shotName.append("/");
+            shotName.append(fileName);
+
+//            String groupPath = LessConfig.getGroup();
+
+            LOG.debug("文件保存成功，返回文件key={}", shotName);
+            channelHandlerContext.writeAndFlush(LessMessageUtils.writeUploadFileOutDataToLessMessage(lessMessage.getHeader().getSessionId(), shotName.toString(), fileExt));
         } else {
             channelHandlerContext.fireChannelRead(lessMessage);
         }
