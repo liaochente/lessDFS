@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 public class LessConfig {
 
-
     @LessValue("less.server.data_path")
     private static String dataDir = "";
 
@@ -37,6 +36,12 @@ public class LessConfig {
 
     @LessValue("less.server.max_frame_length")
     private static int maxFrameLength = 102400;
+
+    @LessValue("less.server.cache")
+    private static boolean cache;
+
+    @LessValue("less.server.cache.size")
+    private static long cacheSize;
 
     private LessConfig() {
 
@@ -98,6 +103,10 @@ public class LessConfig {
                         field.setAccessible(true);
                         if ("int".equals(field.getType().getName())) {
                             field.set(null, Integer.parseInt(configValue));
+                        } else if ("boolean".equals(field.getType().getName())) {
+                            field.set(null, Boolean.parseBoolean(configValue));
+                        }  else if ("long".equals(field.getType().getName())) {
+                            field.set(null, Long.parseLong(configValue));
                         } else {
                             field.set(null, configValue);
                         }
@@ -139,5 +148,11 @@ public class LessConfig {
         return maxFrameLength;
     }
 
+    public static boolean isCache() {
+        return cache;
+    }
 
+    public static long getCacheSize() {
+        return cacheSize;
+    }
 }

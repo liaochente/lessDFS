@@ -1,5 +1,6 @@
 package com.liaochente.lessdfs.handler;
 
+import com.liaochente.lessdfs.cache.CacheFactory;
 import com.liaochente.lessdfs.disk.StorageNode;
 import com.liaochente.lessdfs.disk.VirtualDirectoryFactory;
 import com.liaochente.lessdfs.protocol.LessMessage;
@@ -45,6 +46,8 @@ public class LessUploadFileHandler extends SimpleChannelInboundHandler<LessMessa
             shotName.append(storageNode.getDrive());
             shotName.append("/");
             shotName.append(fileName);
+
+            CacheFactory.addCache(shotName.toString(), data, fileExt);
 
 //            String groupPath = LessConfig.getGroup();
 

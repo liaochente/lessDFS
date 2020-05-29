@@ -1,5 +1,6 @@
 package com.liaochente.lessdfs.handler;
 
+import com.liaochente.lessdfs.cache.CacheFactory;
 import com.liaochente.lessdfs.constant.LessConfig;
 import com.liaochente.lessdfs.constant.LessStatus;
 import com.liaochente.lessdfs.disk.VirtualDirectoryFactory;
@@ -33,6 +34,8 @@ public class LessDeleteFileHandler extends SimpleChannelInboundHandler<LessMessa
             String filePath = VirtualDirectoryFactory.searchFile(fileName);
             if (Paths.get(filePath).toFile().exists()) {
                 Files.delete(Paths.get(filePath));
+                //从缓存中删除
+                CacheFactory.removeCache(fileName);
             }
             channelHandlerContext.writeAndFlush(LessMessageUtils.writeDeleteFileOutDataToLessMessage(lessMessage.getHeader().getSessionId()));
         } else {
