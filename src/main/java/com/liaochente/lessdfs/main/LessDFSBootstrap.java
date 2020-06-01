@@ -1,6 +1,5 @@
 package com.liaochente.lessdfs.main;
 
-import com.liaochente.lessdfs.cache.CacheFactory;
 import com.liaochente.lessdfs.constant.LessConfig;
 import com.liaochente.lessdfs.disk.VirtualDirectoryFactory;
 import com.liaochente.lessdfs.handler.*;

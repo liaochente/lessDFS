@@ -1,21 +1,16 @@
 package com.liaochente.lessdfs.handler;
 
-import com.liaochente.lessdfs.cache.CacheFactory;
-import com.liaochente.lessdfs.constant.LessConfig;
-import com.liaochente.lessdfs.constant.LessStatus;
+import com.liaochente.lessdfs.cache.LRUFileCaches;
 import com.liaochente.lessdfs.disk.VirtualDirectoryFactory;
 import com.liaochente.lessdfs.protocol.LessMessage;
 import com.liaochente.lessdfs.protocol.LessMessageType;
 import com.liaochente.lessdfs.protocol.body.data.DeleteFileInBodyData;
-import com.liaochente.lessdfs.protocol.body.data.DownloadFileBodyData;
 import com.liaochente.lessdfs.util.LessMessageUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -35,7 +30,7 @@ public class LessDeleteFileHandler extends SimpleChannelInboundHandler<LessMessa
             if (Paths.get(filePath).toFile().exists()) {
                 Files.delete(Paths.get(filePath));
                 //从缓存中删除
-                CacheFactory.removeCache(fileName);
+                LRUFileCaches.removeCache(fileName);
             }
             channelHandlerContext.writeAndFlush(LessMessageUtils.writeDeleteFileOutDataToLessMessage(lessMessage.getHeader().getSessionId()));
         } else {

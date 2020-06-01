@@ -29,6 +29,22 @@ public class SystemUtils {
         return bytesToHexString(bytes);
     }
 
+    public final static byte[] sha512Bytes(byte[] bytes) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
+            messageDigest.update(bytes);
+            return messageDigest.digest();
+        } catch (NoSuchAlgorithmException e) {
+            LOG.error("初始化MD5失败", e);
+        }
+        return null;
+    }
+
+    public final static String sha512String(byte[] bytes) {
+        bytes = sha512Bytes(bytes);
+        return bytesToHexString(bytes);
+    }
+
     /**
      * 字节数组转16进制字符串
      *
@@ -54,16 +70,7 @@ public class SystemUtils {
     }
 
     public static void main(String[] args) {
-        //init subDirectorys
-        for (int i = 0; i < 256; i++) {
-            StringBuffer sb = new StringBuffer();
-            String hexStr = Integer.toHexString(i);
-            if (hexStr.length() < 2) {
-                sb.append(0);
-            }
-            sb.append(hexStr);
-
-            System.out.print(sb.toString().toUpperCase() + " | ");
-        }
+        String sha512 = sha512String("lessDFS".getBytes());
+        System.out.println("sha512 = " + sha512);
     }
 }

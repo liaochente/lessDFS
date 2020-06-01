@@ -1,6 +1,6 @@
 package com.liaochente.lessdfs.handler;
 
-import com.liaochente.lessdfs.cache.CacheFactory;
+import com.liaochente.lessdfs.cache.LRUFileCaches;
 import com.liaochente.lessdfs.constant.LessStatus;
 import com.liaochente.lessdfs.disk.VirtualDirectoryFactory;
 import com.liaochente.lessdfs.protocol.LessMessage;
@@ -32,7 +32,10 @@ public class LessDownloadFileHandler extends SimpleChannelInboundHandler<LessMes
             String fileName = bodyData.getFileName();
 
             //先从缓存读取
-            byte[] data = CacheFactory.getCacheBytes(fileName);
+            LOG.debug("从文件缓存中搜寻'{}'");
+            byte[] data = LRUFileCaches.getCacheBytes(fileName);
+            LOG.debug("文件缓存搜寻结果 {}", fileName, data != null);
+
             if (data == null) {
                 String filePath = VirtualDirectoryFactory.searchFile(fileName);
                 Path path = Paths.get(filePath);
