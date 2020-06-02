@@ -31,7 +31,6 @@ public class LessDFSBootstrap {
         try {
             LessConfig.init();
             VirtualDirectoryFactory.init();
-            CacheFactory.init();
         } catch (IOException | IllegalAccessException e) {
             LOG.error("初始化配置文件失败", e);
             return;
