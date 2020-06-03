@@ -43,6 +43,12 @@ public class LessConfig {
     @LessValue("less.server.cache.size")
     private static long cacheSize;
 
+    @LessValue("less.server.http")
+    private static boolean http;
+
+    @LessValue("less.server.http.port")
+    private static int httpPort;
+
     private LessConfig() {
 
     }
@@ -114,6 +120,14 @@ public class LessConfig {
                 }
             }
         }
+    }
+
+    public static boolean isHttp() {
+        return http;
+    }
+
+    public static int getHttpPort() {
+        return httpPort;
     }
 
     public static String getStorageDir() {
