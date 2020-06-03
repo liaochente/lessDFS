@@ -1,6 +1,5 @@
 package com.liaochente.lessdfs.handler;
 
-import com.liaochente.lessdfs.cache.LRUFileCaches;
 import com.liaochente.lessdfs.constant.LessStatus;
 import com.liaochente.lessdfs.disk.VirtualDirectoryFactory;
 import com.liaochente.lessdfs.protocol.LessMessage;
@@ -11,10 +10,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * 处理文件下载
@@ -31,18 +26,8 @@ public class LessDownloadFileHandler extends SimpleChannelInboundHandler<LessMes
             DownloadFileBodyData bodyData = (DownloadFileBodyData) lessMessage.getBody().getBo();
             String fileName = bodyData.getFileName();
 
-            //先从缓存读取
-            LOG.debug("从文件缓存中搜寻'{}'");
-            byte[] data = LRUFileCaches.getCacheBytes(fileName);
-            LOG.debug("文件缓存搜寻结果 {}", fileName, data != null);
+            byte[] data = VirtualDirectoryFactory.searchFileToBytes(fileName);
 
-            if (data == null) {
-                String filePath = VirtualDirectoryFactory.searchFile(fileName);
-                Path path = Paths.get(filePath);
-                if (path.toFile().exists()) {
-                    data = Files.readAllBytes(path);
-                }
-            }
             //输出文件内容
             if (data != null) {
                 channelHandlerContext.writeAndFlush(LessMessageUtils.writeDownloadFileOutDataToLessMessage(lessMessage.getHeader().getSessionId(),

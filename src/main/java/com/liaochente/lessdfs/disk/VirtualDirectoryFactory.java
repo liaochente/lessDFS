@@ -1,13 +1,16 @@
 package com.liaochente.lessdfs.disk;
 
+import com.liaochente.lessdfs.cache.LRUFileCaches;
 import com.liaochente.lessdfs.constant.LessConfig;
 import com.liaochente.lessdfs.util.SystemUtils;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -56,6 +59,15 @@ public class VirtualDirectoryFactory {
     }
 
     /**
+     * 添加存储目录
+     *
+     * @param virtualDirectory
+     */
+    public final static void addVirtualDirectory(VirtualDirectory virtualDirectory) {
+        VIRTUAL_DIRECTORIES.add(virtualDirectory);
+    }
+
+    /**
      * 获取文件存储的真实路径
      * file key example: L0/00/00/abcdasdadsad
      *
@@ -72,12 +84,80 @@ public class VirtualDirectoryFactory {
     }
 
     /**
-     * 添加存储节点
+     * 获取文件内容字节数组
+     * file key example: L0/00/00/abcdasdadsad
      *
-     * @param virtualDirectory
+     * @param fileKey
+     * @return
+     * @throws IOException
      */
-    public final static void addVirtualDirectory(VirtualDirectory virtualDirectory) {
-        VIRTUAL_DIRECTORIES.add(virtualDirectory);
+    public static byte[] searchFileToBytes(String fileKey) throws IOException {
+        //先从缓存读取
+        byte[] data = LRUFileCaches.getCacheBytes(fileKey);
+        if (data == null) {
+            String filePath = VirtualDirectoryFactory.searchFile(fileKey);
+            Path path = Paths.get(filePath);
+            if (path.toFile().exists()) {
+                data = Files.readAllBytes(path);
+            }
+        }
+        return data;
+    }
+
+    /**
+     * 保存文件
+     *
+     * @param data
+     * @param fileExt
+     * @return
+     * @throws IOException
+     */
+    public static String addFile(byte[] data, String fileExt) throws IOException {
+        String fileName = UUID.randomUUID().toString().replaceAll("-", "");
+
+        StorageNode storageNode = VirtualDirectoryFactory.getBestStorageNode(data, fileExt);
+        String absolutePath = storageNode.getAbsolutePath();
+        String filePath = absolutePath + "/" + fileName;
+        Files.write(Paths.get(filePath), data);
+
+        //file key: 用于返给客户端使用
+        StringBuffer shortName = new StringBuffer(storageNode.getVirtualDirectoryDrive());
+        shortName.append("/");
+        shortName.append(storageNode.getParentDrive());
+        shortName.append("/");
+        shortName.append(storageNode.getDrive());
+        shortName.append("/");
+        shortName.append(fileName);
+
+        LRUFileCaches.addCache(shortName.toString(), data, fileExt);
+
+        return shortName.toString();
+    }
+
+    /**
+     * 删除文件
+     *
+     * @param fileKey
+     * @return
+     * @throws IOException
+     */
+    public static boolean removeFile(String fileKey) throws IOException {
+        String filePath = VirtualDirectoryFactory.searchFile(fileKey);
+        if (Paths.get(filePath).toFile().exists()) {
+            Files.delete(Paths.get(filePath));
+            //从缓存中删除
+            LRUFileCaches.removeCache(fileKey);
+        }
+        return true;
+    }
+
+    /**
+     * 获得一个可用的存储目录
+     *
+     * @return
+     */
+    private static VirtualDirectory getVirtualDirectory() {
+        return VIRTUAL_DIRECTORIES.get(0);
     }
 
     /**
@@ -85,19 +165,11 @@ public class VirtualDirectoryFactory {
      *
      * @return
      */
-    public static StorageNode getBestStorageNode(byte[] fileBytes, String fileExt) {
+    private static StorageNode getBestStorageNode(byte[] fileBytes, String fileExt) {
         String fileMD5 = SystemUtils.md5String(fileBytes);
         VirtualDirectory virtualDirectory = getVirtualDirectory();
         List<StorageNode> storageNodes = virtualDirectory.getNodes();
         return storageNodes.get(fileMD5.hashCode() % storageNodes.size());
     }
 
-    /**
-     * 获得一个可用的存储节点
-     *
-     * @return
-     */
-    private static VirtualDirectory getVirtualDirectory() {
-        return VIRTUAL_DIRECTORIES.get(0);
-    }
 }

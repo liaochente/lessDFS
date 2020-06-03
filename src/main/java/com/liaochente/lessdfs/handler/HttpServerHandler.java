@@ -1,23 +1,14 @@
 package com.liaochente.lessdfs.handler;
 
-import com.liaochente.lessdfs.cache.LRUFileCaches;
 import com.liaochente.lessdfs.disk.VirtualDirectoryFactory;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.stream.ChunkedFile;
-import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.activation.MimetypesFileTypeMap;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.OutputStream;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
@@ -33,14 +24,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
         String fileName = uri.substring(1);
 
         //先从缓存读取
-        byte[] data = LRUFileCaches.getCacheBytes(fileName);
-        if (data == null) {
-            String filePath = VirtualDirectoryFactory.searchFile(fileName);
-            Path path = Paths.get(filePath);
-            if (path.toFile().exists()) {
-                data = Files.readAllBytes(path);
-            }
-        }
+        byte[] data = VirtualDirectoryFactory.searchFileToBytes(fileName);
 
         // 创建http响应
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
