@@ -143,6 +143,7 @@ public class LessDFSBootstrap {
                             socketChannel.pipeline().addLast("httpAggregator",new HttpObjectAggregator(512*1024));
                             socketChannel.pipeline().addLast(new ChunkedWriteHandler());
                             socketChannel.pipeline().addLast(new HttpServerHandler());
+                            socketChannel.pipeline().addLast(new LessExceptionHandler());
                         }
                     });
             ChannelFuture future = serverBootstrap.bind(LessConfig.getHttpPort()).sync();
