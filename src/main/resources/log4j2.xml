@@ -10,7 +10,7 @@
             <appender-ref ref="Console"/>
         </root>
 
-        <logger name="io.netty" level="debug" additivity="false">
+        <logger name="io.netty" level="error" additivity="false">
             <appender-ref ref="Console"/>
         </logger>
     </loggers>
