@@ -1,4 +1,4 @@
-![LessDFS-logo](https://github.com/liaochente/lessDFS/blob/master/lessDFS-logo.png)
+![LessDFS-logo](https://github.com/liaochente/lessDFS/tree/master/src/main/resources/lessDFS-logo.png)
 
 ## 什么是LessDFS
 
