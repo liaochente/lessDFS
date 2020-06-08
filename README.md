@@ -1,4 +1,4 @@
-<div align=center><img src="https://crop-1257315785.cos.ap-shanghai.myqcloud.com/carp/pywxicon/lessDFS-logo.png"/></div>
+<div align=center><img width=200 height=200 src="https://crop-1257315785.cos.ap-shanghai.myqcloud.com/carp/pywxicon/lessDFS-logo.png"/></div>
 
 ## 什么是LessDFS
 
