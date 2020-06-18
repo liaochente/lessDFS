@@ -14,9 +14,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/**
+ * 报文处理工具
+ */
 public class LessMessageUtils {
+
     private final static Logger LOG = LoggerFactory.getLogger(LessMessageUtils.class);
 
+    /**
+     * 报文头
+     */
     public final static Integer MAGIC_CODE = 0x294;
 
     /**
