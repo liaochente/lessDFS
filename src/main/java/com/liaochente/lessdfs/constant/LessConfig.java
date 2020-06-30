@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+/**
+ * 服务参数配置类
+ */
 public class LessConfig {
 
     @LessValue("less.server.data_path")
@@ -111,7 +114,7 @@ public class LessConfig {
                             field.set(null, Integer.parseInt(configValue));
                         } else if ("boolean".equals(field.getType().getName())) {
                             field.set(null, Boolean.parseBoolean(configValue));
-                        }  else if ("long".equals(field.getType().getName())) {
+                        } else if ("long".equals(field.getType().getName())) {
                             field.set(null, Long.parseLong(configValue));
                         } else {
                             field.set(null, configValue);

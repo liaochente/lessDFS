@@ -7,6 +7,10 @@ import org.slf4j.LoggerFactory;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * 文件缓存工具类
+ * 实现Least Recently Used算法
+ */
 public class LRUFileCaches implements IFileCaches {
 
     private final static Logger LOG = LoggerFactory.getLogger(LRUFileCaches.class);
@@ -65,11 +69,9 @@ public class LRUFileCaches implements IFileCaches {
      */
     public final static byte[] getCacheBytes(String key) {
         byte[] bytes = null;
-        if (isCache()) {
-            FileCacheItem fileCacheItem = caches.get(key);
-            if (fileCacheItem != null) {
-                bytes = fileCacheItem.getFileBytes();
-            }
+        FileCacheItem fileCacheItem = getCacheItem(key);
+        if (fileCacheItem != null) {
+            bytes = fileCacheItem.getFileBytes();
         }
         return bytes;
     }

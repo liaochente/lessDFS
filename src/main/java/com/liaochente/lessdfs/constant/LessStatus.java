@@ -1,7 +1,8 @@
 package com.liaochente.lessdfs.constant;
 
-import com.liaochente.lessdfs.protocol.LessMessageType;
-
+/**
+ * 服务请求响应状态枚举
+ */
 public enum LessStatus {
 
     INTERNAL_ERROR(205, "服务器内部错误"),
